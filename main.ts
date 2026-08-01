@@ -9,6 +9,8 @@ const stageEls = new Map(
 );
 const glowBlur = document.querySelector<SVGFEGaussianBlurElement>("#glowBlur");
 const organicDisplace = document.querySelector<SVGFEDisplacementMapElement>("#organicDisplace");
+const rippleAnim = document.querySelector<SVGAnimateElement>("#rippleAnim");
+const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 let resetting = false;
 let queued = false;
@@ -44,6 +46,7 @@ input?.addEventListener("input", () => {
   if (shouldReset(raw, MAX) && !resetting) {
     resetting = true;
     scene?.classList.add("is-resetting");
+    if (!prefersReducedMotion) rippleAnim?.beginElement();
     window.setTimeout(() => {
       input.value = "0";
       render(0);

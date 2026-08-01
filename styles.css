@@ -45,7 +45,7 @@ h1 {
   height: min(70vw, 480px);
   display: block;
   margin: 0 auto;
-  filter: url("#glow") hue-rotate(var(--hue)) saturate(var(--sat));
+  filter: url("#glow") url("#ripple") hue-rotate(var(--hue)) saturate(var(--sat));
   transform: scale(var(--scale));
   transition:
     filter 120ms linear,
