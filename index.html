@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>COMP4020 prototype</title>
+    <title>Turritopsis</title>
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
@@ -13,11 +13,84 @@
       </nav>
     </header>
     <main>
-      <h1>COMP4020 prototype</h1>
-      <p data-testid="intro">
-        Replace this with your prototype. This week's brief is on the course website;
-        <code>spec/README.md</code> explains how the checks in this repo relate to it.
-      </p>
+      <h1>The Immortal Jellyfish</h1>
+      <p data-testid="intro" class="intro">If you could start over, would you?</p>
+
+      <svg
+        id="jelly-scene"
+        viewBox="0 0 400 400"
+        role="img"
+        aria-label="An animated jellyfish that ages as you drag the scrubber below, from a small anchored polyp through youth and maturity to old age."
+      >
+        <defs>
+          <radialGradient id="bioGradient" cx="50%" cy="35%" r="65%">
+            <stop offset="0%" stop-color="#eafcff" stop-opacity="0.95" />
+            <stop offset="45%" stop-color="#59e8d0" stop-opacity="0.7" />
+            <stop offset="100%" stop-color="#0b3d55" stop-opacity="0" />
+          </radialGradient>
+          <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
+            <feGaussianBlur id="glowBlur" in="SourceGraphic" stdDeviation="3" result="blur" />
+            <feMerge>
+              <feMergeNode in="blur" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+        </defs>
+
+        <!-- polyp: anchored stalk with a short tentacle crown -->
+        <g class="stage" data-stage="polyp" fill="url(#bioGradient)">
+          <ellipse cx="200" cy="330" rx="26" ry="8" opacity="0.5" />
+          <path d="M 190 260 Q 186 300 192 328 L 208 328 Q 214 300 210 260 Z" />
+          <g class="tentacles">
+            <path d="M 190 262 Q 178 248 170 252" fill="none" stroke="url(#bioGradient)" stroke-width="4" stroke-linecap="round" />
+            <path d="M 196 258 Q 190 240 182 240" fill="none" stroke="url(#bioGradient)" stroke-width="4" stroke-linecap="round" />
+            <path d="M 204 258 Q 210 240 218 240" fill="none" stroke="url(#bioGradient)" stroke-width="4" stroke-linecap="round" />
+            <path d="M 210 262 Q 222 248 230 252" fill="none" stroke="url(#bioGradient)" stroke-width="4" stroke-linecap="round" />
+          </g>
+        </g>
+
+        <!-- young medusa: small bell, thin sparse tentacles -->
+        <g class="stage" data-stage="young" fill="url(#bioGradient)">
+          <path d="M 160 190 Q 160 130 200 128 Q 240 130 240 190 Q 200 210 160 190 Z" />
+          <g class="tentacles">
+            <path d="M 175 195 Q 170 250 165 290" fill="none" stroke="url(#bioGradient)" stroke-width="3" stroke-linecap="round" />
+            <path d="M 190 202 Q 187 260 182 300" fill="none" stroke="url(#bioGradient)" stroke-width="3" stroke-linecap="round" />
+            <path d="M 210 202 Q 213 260 218 300" fill="none" stroke="url(#bioGradient)" stroke-width="3" stroke-linecap="round" />
+            <path d="M 225 195 Q 230 250 235 290" fill="none" stroke="url(#bioGradient)" stroke-width="3" stroke-linecap="round" />
+          </g>
+        </g>
+
+        <!-- mature medusa: full bell, oral arms, many tentacles -->
+        <g class="stage" data-stage="mature" fill="url(#bioGradient)">
+          <path d="M 130 200 Q 128 110 200 105 Q 272 110 270 200 Q 200 232 130 200 Z" />
+          <g class="oral-arms">
+            <path d="M 185 210 Q 180 250 190 280" fill="none" stroke="url(#bioGradient)" stroke-width="6" stroke-linecap="round" opacity="0.8" />
+            <path d="M 200 214 Q 200 255 200 290" fill="none" stroke="url(#bioGradient)" stroke-width="6" stroke-linecap="round" opacity="0.8" />
+            <path d="M 215 210 Q 220 250 210 280" fill="none" stroke="url(#bioGradient)" stroke-width="6" stroke-linecap="round" opacity="0.8" />
+          </g>
+          <g class="tentacles">
+            <path d="M 145 205 Q 135 270 125 330" fill="none" stroke="url(#bioGradient)" stroke-width="3" stroke-linecap="round" />
+            <path d="M 160 215 Q 153 280 145 335" fill="none" stroke="url(#bioGradient)" stroke-width="3" stroke-linecap="round" />
+            <path d="M 175 222 Q 170 285 165 340" fill="none" stroke="url(#bioGradient)" stroke-width="3" stroke-linecap="round" />
+            <path d="M 225 222 Q 230 285 235 340" fill="none" stroke="url(#bioGradient)" stroke-width="3" stroke-linecap="round" />
+            <path d="M 240 215 Q 247 280 255 335" fill="none" stroke="url(#bioGradient)" stroke-width="3" stroke-linecap="round" />
+            <path d="M 255 205 Q 265 270 275 330" fill="none" stroke="url(#bioGradient)" stroke-width="3" stroke-linecap="round" />
+          </g>
+        </g>
+
+        <!-- senescent: shrunken, asymmetric, drooping -->
+        <g class="stage" data-stage="senescent" fill="url(#bioGradient)">
+          <path d="M 150 210 Q 152 150 198 140 Q 250 148 245 205 Q 195 225 150 210 Z" />
+          <g class="tentacles">
+            <path d="M 165 212 Q 158 245 168 270" fill="none" stroke="url(#bioGradient)" stroke-width="3" stroke-linecap="round" opacity="0.8" />
+            <path d="M 190 218 Q 186 250 195 275" fill="none" stroke="url(#bioGradient)" stroke-width="3" stroke-linecap="round" opacity="0.6" />
+            <path d="M 222 216 Q 228 248 220 272" fill="none" stroke="url(#bioGradient)" stroke-width="3" stroke-linecap="round" opacity="0.6" />
+          </g>
+        </g>
+      </svg>
+
+      <label class="scrubber-label" for="scrubber">Drag to let time pass</label>
+      <input id="scrubber" type="range" min="0" max="10000" step="1" value="0" />
     </main>
     <script type="module" src="./main.ts"></script>
   </body>
