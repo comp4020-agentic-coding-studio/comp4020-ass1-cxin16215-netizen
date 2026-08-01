@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { JSDOM } from "jsdom";
 import { describe, expect, it } from "vitest";
-import { STAGES, stageBlend, lerpParam, shouldReset } from "../life-cycle";
+import { STAGES, STAGE_INFO, stageBlend, lerpParam, shouldReset, activeStageLabel } from "../life-cycle";
 
 const dom = new JSDOM(readFileSync(resolve("dist/index.html"), "utf8"));
 const doc = dom.window.document;
@@ -56,5 +56,17 @@ describe("life-cycle logic: pure functions", () => {
   it("only requests a reset once progress reaches the maximum", () => {
     expect(shouldReset(9999, 10000)).toBe(false);
     expect(shouldReset(10000, 10000)).toBe(true);
+  });
+
+  it("has a caption for every stage, and none of them describe the reset", () => {
+    for (const stage of STAGES) {
+      expect(STAGE_INFO[stage].caption.length).toBeGreaterThan(0);
+      expect(STAGE_INFO[stage].caption.toLowerCase()).not.toMatch(/polyp again|revert|reset|loop|repeat|immortal/);
+    }
+  });
+
+  it("picks the stage whose blend weight currently dominates", () => {
+    expect(activeStageLabel(0)).toBe("polyp");
+    expect(activeStageLabel(0.999)).toBe("senescent");
   });
 });

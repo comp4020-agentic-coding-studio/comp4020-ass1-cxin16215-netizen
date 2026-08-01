@@ -7,6 +7,12 @@
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
+    <div id="intro-splash" aria-hidden="true">
+      <p data-testid="intro" class="intro-line">If you could start over, would you?</p>
+    </div>
+
+    <div class="particles" aria-hidden="true"></div>
+
     <header>
       <nav aria-label="Primary">
         <a href="./">Home</a>
@@ -14,7 +20,6 @@
     </header>
     <main>
       <h1>The Immortal Jellyfish</h1>
-      <p data-testid="intro" class="intro">If you could start over, would you?</p>
 
       <svg
         id="jelly-scene"
@@ -68,6 +73,20 @@
           </filter>
         </defs>
 
+        <!-- ouroboros: dormant ring, drawn only around a loop-reset -->
+        <circle
+          id="ouroboros-ring"
+          cx="200"
+          cy="200"
+          r="170"
+          fill="none"
+          stroke="url(#bioGradient)"
+          stroke-width="3"
+          stroke-dasharray="1068.14"
+          stroke-dashoffset="1068.14"
+          opacity="0"
+        />
+
         <!-- polyp: anchored stalk with a short tentacle crown -->
         <g class="stage" data-stage="polyp" fill="url(#bioGradient)">
           <ellipse cx="200" cy="330" rx="26" ry="8" opacity="0.5" />
@@ -119,6 +138,8 @@
           </g>
         </g>
       </svg>
+
+      <p id="stage-caption" class="stage-caption" aria-hidden="true"></p>
 
       <label class="scrubber-label" for="scrubber">Drag to let time pass</label>
       <input id="scrubber" type="range" min="0" max="10000" step="1" value="0" />

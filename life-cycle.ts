@@ -50,3 +50,36 @@ export function lerpParam(param: keyof StageParams, t: number): number {
 export function shouldReset(raw: number, max: number): boolean {
   return raw >= max;
 }
+
+export interface StageInfo {
+  label: string;
+  caption: string;
+}
+
+// Describes what each stage is, biologically -- never what happens between
+// stages. The reset back to polyp stays undescribed; it's discovered, not read.
+export const STAGE_INFO: Record<Stage, StageInfo> = {
+  polyp: {
+    label: "Polyp",
+    caption: "Anchored to the seafloor, a colony of polyps buds slowly, waiting.",
+  },
+  young: {
+    label: "Young medusa",
+    caption: "Freed to drift, a small bell begins pulsing through open water.",
+  },
+  mature: {
+    label: "Mature medusa",
+    caption: "Full grown, oral arms trail and sting to feed, tentacles reaching wide.",
+  },
+  senescent: {
+    label: "Senescent",
+    caption: "Aging, the bell shrinks and frays -- tissue breaking down, drifting toward the seafloor.",
+  },
+};
+
+// Which stage's caption should be showing at t: whichever of the two
+// blending stages currently has the larger weight.
+export function activeStageLabel(t: number): Stage {
+  const { from, to, localT } = stageBlend(t);
+  return STAGES[localT < 0.5 ? from : to];
+}
