@@ -25,7 +25,7 @@
         id="jelly-scene"
         viewBox="0 0 400 400"
         role="img"
-        aria-label="An animated jellyfish that ages as you drag the scrubber below, from a small anchored polyp through youth and maturity to old age."
+        aria-label="An animated jellyfish that ages a step each time you press the button below, from a small anchored polyp through youth and maturity to old age."
       >
         <defs>
           <radialGradient id="bioGradient" cx="50%" cy="35%" r="65%">
@@ -139,10 +139,28 @@
         </g>
       </svg>
 
-      <p id="stage-caption" class="stage-caption" aria-hidden="true"></p>
+      <p id="current-stage-label" class="current-stage-label" aria-live="polite">Polyp</p>
 
-      <label class="scrubber-label" for="scrubber">Drag to let time pass</label>
-      <input id="scrubber" type="range" min="0" max="10000" step="1" value="0" />
+      <div class="controls">
+        <button id="next-stage" type="button" class="primary-button">Let time pass</button>
+        <button
+          id="info-toggle"
+          type="button"
+          class="info-button"
+          aria-haspopup="dialog"
+          aria-controls="stage-info"
+          aria-label="More about this stage"
+        >
+          &#9432;
+        </button>
+      </div>
+
+      <dialog id="stage-info" aria-labelledby="stage-info-title">
+        <button id="stage-info-close" type="button" class="dialog-close" aria-label="Close">&times;</button>
+        <h2 id="stage-info-title">Polyp</h2>
+        <div class="reference-photo" aria-hidden="true"><span>Reference photo -- placeholder</span></div>
+        <p id="stage-info-detail"></p>
+      </dialog>
     </main>
     <script type="module" src="./main.ts"></script>
   </body>

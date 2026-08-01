@@ -20,40 +20,36 @@ export const KEYFRAME_PARAMS: Record<Stage, StageParams> = {
   senescent: { hueDeg: -40, blurStd: 2, displaceScale: 9, scale: 0.85, saturate: 0.6 },
 };
 
-function easeInOutCubic(x: number): number {
-  return x < 0.5 ? 4 * x ** 3 : 1 - (-2 * x + 2) ** 3 / 2;
+export function ease(x: number): number {
+  const clamped = Math.min(Math.max(x, 0), 1);
+  return clamped < 0.5 ? 4 * clamped ** 3 : 1 - (-2 * clamped + 2) ** 3 / 2;
 }
 
-export interface Blend {
-  from: number;
-  to: number;
-  localT: number;
+// The next stage in the cycle -- wraps senescent back to polyp. This wrap is
+// the whole mechanic: the button never says a loop is coming.
+export function nextStage(stage: Stage): Stage {
+  return STAGES[(STAGES.indexOf(stage) + 1) % STAGES.length];
 }
 
-// t in [0,1). Four stages make three segments; the reset (t wrapping back
-// to 0) is handled by the caller via shouldReset, not in here.
-export function stageBlend(t: number): Blend {
-  const segments = STAGES.length - 1;
-  const clamped = Math.min(Math.max(t, 0), 1 - Number.EPSILON);
-  const raw = clamped * segments;
-  const from = Math.min(Math.floor(raw), segments - 1);
-  return { from, to: from + 1, localT: easeInOutCubic(raw - from) };
+// True only for the one transition that wraps the cycle, so the caller knows
+// when to play the ouroboros flourish.
+export function isLoopTransition(from: Stage, to: Stage): boolean {
+  return from === STAGES[STAGES.length - 1] && to === STAGES[0];
 }
 
-export function lerpParam(param: keyof StageParams, t: number): number {
-  const { from, to, localT } = stageBlend(t);
-  const a = KEYFRAME_PARAMS[STAGES[from]][param];
-  const b = KEYFRAME_PARAMS[STAGES[to]][param];
+// Interpolates a single visual parameter between two named stages, eased.
+// Used to animate the button-triggered transition frame by frame.
+export function blendParams(from: Stage, to: Stage, rawLocalT: number, param: keyof StageParams): number {
+  const localT = ease(rawLocalT);
+  const a = KEYFRAME_PARAMS[from][param];
+  const b = KEYFRAME_PARAMS[to][param];
   return a + (b - a) * localT;
-}
-
-export function shouldReset(raw: number, max: number): boolean {
-  return raw >= max;
 }
 
 export interface StageInfo {
   label: string;
   caption: string;
+  detail: string;
 }
 
 // Describes what each stage is, biologically -- never what happens between
@@ -62,24 +58,30 @@ export const STAGE_INFO: Record<Stage, StageInfo> = {
   polyp: {
     label: "Polyp",
     caption: "Anchored to the seafloor, a colony of polyps buds slowly, waiting.",
+    detail:
+      "Turritopsis dohrnii begins life as a tiny polyp, a few millimetres tall, permanently attached to a hard " +
+      "surface on the seafloor. Polyps bud asexually, forming small colonies that can persist for months before " +
+      "releasing free-swimming medusae.",
   },
   young: {
     label: "Young medusa",
     caption: "Freed to drift, a small bell begins pulsing through open water.",
+    detail:
+      "Once released, the young medusa is only a few millimetres across. It pulses its bell to swim and starts " +
+      "feeding on plankton, growing steadily larger over the days that follow.",
   },
   mature: {
     label: "Mature medusa",
     caption: "Full grown, oral arms trail and sting to feed, tentacles reaching wide.",
+    detail:
+      "A mature medusa can grow up to 4.5 millimetres in diameter, with as many as 90 tentacles and a bright red " +
+      "stomach visible through its transparent bell. This is the reproductive stage of its life cycle.",
   },
   senescent: {
     label: "Senescent",
     caption: "Aging, the bell shrinks and frays -- tissue breaking down, drifting toward the seafloor.",
+    detail:
+      "Under stress, starvation, or old age, the medusa's tissue begins to deteriorate. In most jellyfish " +
+      "species, this is the end of the line.",
   },
 };
-
-// Which stage's caption should be showing at t: whichever of the two
-// blending stages currently has the larger weight.
-export function activeStageLabel(t: number): Stage {
-  const { from, to, localT } = stageBlend(t);
-  return STAGES[localT < 0.5 ? from : to];
-}
