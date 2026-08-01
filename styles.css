@@ -39,13 +39,17 @@ h1 {
 #jelly-scene {
   --hue: 0deg;
   --sat: 1;
+  --scale: 1;
 
   width: min(70vw, 480px);
   height: min(70vw, 480px);
   display: block;
   margin: 0 auto;
   filter: url("#glow") hue-rotate(var(--hue)) saturate(var(--sat));
-  transition: filter 120ms linear;
+  transform: scale(var(--scale));
+  transition:
+    filter 120ms linear,
+    transform 120ms linear;
 }
 
 #jelly-scene .stage {

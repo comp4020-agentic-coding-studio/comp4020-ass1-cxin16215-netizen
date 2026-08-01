@@ -30,8 +30,14 @@
           </radialGradient>
           <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
             <feGaussianBlur id="glowBlur" in="SourceGraphic" stdDeviation="3" result="blur" />
+            <feColorMatrix
+              in="blur"
+              type="matrix"
+              values="1.4 0 0 0 0  0 1.4 0 0 0  0 0 1.4 0 0  0 0 0 1 0"
+              result="bloom"
+            />
             <feMerge>
-              <feMergeNode in="blur" />
+              <feMergeNode in="bloom" />
               <feMergeNode in="SourceGraphic" />
             </feMerge>
           </filter>

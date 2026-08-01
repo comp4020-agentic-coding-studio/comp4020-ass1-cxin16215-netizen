@@ -23,6 +23,7 @@ function render(t: number): void {
 
   scene?.style.setProperty("--hue", `${lerpParam("hueDeg", t)}deg`);
   scene?.style.setProperty("--sat", String(lerpParam("saturate", t)));
+  scene?.style.setProperty("--scale", String(lerpParam("scale", t)));
   glowBlur?.setAttribute("stdDeviation", String(lerpParam("blurStd", t)));
   organicDisplace?.setAttribute("scale", String(lerpParam("displaceScale", t)));
 }
