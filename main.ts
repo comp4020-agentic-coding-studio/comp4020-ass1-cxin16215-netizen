@@ -8,6 +8,7 @@ const stageEls = new Map(
   STAGES.map((stage) => [stage, document.querySelector<SVGGElement>(`[data-stage="${stage}"]`)]),
 );
 const glowBlur = document.querySelector<SVGFEGaussianBlurElement>("#glowBlur");
+const organicDisplace = document.querySelector<SVGFEDisplacementMapElement>("#organicDisplace");
 
 let resetting = false;
 let queued = false;
@@ -23,6 +24,7 @@ function render(t: number): void {
   scene?.style.setProperty("--hue", `${lerpParam("hueDeg", t)}deg`);
   scene?.style.setProperty("--sat", String(lerpParam("saturate", t)));
   glowBlur?.setAttribute("stdDeviation", String(lerpParam("blurStd", t)));
+  organicDisplace?.setAttribute("scale", String(lerpParam("displaceScale", t)));
 }
 
 function scheduleRender(t: number): void {
