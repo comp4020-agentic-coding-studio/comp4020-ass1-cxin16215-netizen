@@ -312,6 +312,72 @@ dialog#stage-info p {
   text-align: center;
 }
 
+/* --- idle motion: each stage keeps breathing/swaying at rest, not just
+   mid-transition -- amplitude and pace vary per stage so none of the four
+   feel interchangeable even standing still --- */
+
+@keyframes bell-pulse {
+  0%,
+  100% {
+    transform: scale(1, 1);
+  }
+
+  50% {
+    transform: scale(1.03, 0.95);
+  }
+}
+
+@keyframes limb-sway {
+  0%,
+  100% {
+    transform: rotate(-2deg);
+  }
+
+  50% {
+    transform: rotate(2deg);
+  }
+}
+
+#jelly-scene .body {
+  transform-box: fill-box;
+  transform-origin: 50% 0%;
+  animation: bell-pulse 3.6s ease-in-out infinite;
+}
+
+#jelly-scene .tentacles,
+#jelly-scene .oral-arms {
+  transform-box: fill-box;
+  transform-origin: 50% 0%;
+  animation: limb-sway 4.4s ease-in-out infinite;
+}
+
+#jelly-scene .stage[data-stage="polyp"] .tentacles {
+  animation-duration: 5.2s;
+}
+
+#jelly-scene .stage[data-stage="young"] .body {
+  animation-duration: 2.4s;
+}
+
+#jelly-scene .stage[data-stage="young"] .tentacles {
+  animation-duration: 3.2s;
+}
+
+#jelly-scene .stage[data-stage="mature"] .oral-arms {
+  animation-duration: 3s;
+  animation-direction: alternate;
+}
+
+#jelly-scene .stage[data-stage="mature"] .tentacles {
+  animation-duration: 5s;
+}
+
+#jelly-scene .stage[data-stage="senescent"] .body,
+#jelly-scene .stage[data-stage="senescent"] .tentacles {
+  animation-duration: 6.5s;
+  animation-timing-function: ease-in;
+}
+
 @media (prefers-reduced-motion: reduce) {
   #intro-splash {
     animation: none;
@@ -330,6 +396,12 @@ dialog#stage-info p {
 
   #jelly-scene.is-resetting,
   #jelly-scene.is-resetting #ouroboros-ring {
+    animation: none;
+  }
+
+  #jelly-scene .body,
+  #jelly-scene .tentacles,
+  #jelly-scene .oral-arms {
     animation: none;
   }
 }
