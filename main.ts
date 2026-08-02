@@ -12,6 +12,8 @@ const organicDisplace = document.querySelector<SVGFEDisplacementMapElement>("#or
 const rippleAnim = document.querySelector<SVGAnimateElement>("#rippleAnim");
 const currentLabelEl = document.querySelector<HTMLParagraphElement>("#current-stage-label");
 const particlesContainer = document.querySelector<HTMLDivElement>(".particles");
+const fishSchoolEls = Array.from(document.querySelectorAll<SVGSVGElement>(".fish-school"));
+const sharkEl = document.querySelector<SVGSVGElement>(".shark");
 const nextButton = document.querySelector<HTMLButtonElement>("#next-stage");
 const infoButton = document.querySelector<HTMLButtonElement>("#info-toggle");
 const infoDialog = document.querySelector<HTMLDialogElement>("#stage-info");
@@ -32,25 +34,49 @@ function applyParams(stage: Stage): void {
   organicDisplace?.setAttribute("scale", String(p.displaceScale));
 }
 
+// The button carries the "life force" cue for as long as the jellyfish is
+// actually in the senescent stage, not just during the loop-reset transition
+// -- so it's driven off the stage itself, wherever `current` gets set.
+function applyButtonMood(stage: Stage): void {
+  nextButton?.classList.toggle("is-senescent", stage === "senescent");
+}
+
 function showStage(stage: Stage): void {
   STAGES.forEach((s) => {
     const el = stageEls.get(s);
     if (el) el.style.opacity = s === stage ? "1" : "0";
   });
   applyParams(stage);
+  applyButtonMood(stage);
   if (currentLabelEl) currentLabelEl.textContent = STAGE_INFO[stage].label;
 }
 
+// 2800ms matches the ouroboros-draw keyframes' duration (styles.css) -- the
+// class must outlive the draw-in/pulse/return sequence or it gets cut short.
 function flourishLoop(): void {
   scene?.classList.add("is-resetting");
   if (!prefersReducedMotion) rippleAnim?.beginElement();
-  window.setTimeout(() => scene?.classList.remove("is-resetting"), 420);
+  window.setTimeout(() => {
+    scene?.classList.remove("is-resetting");
+  }, 2800);
+}
+
+// Reaching senescence reliably fires the fish-school/shark chase easter egg
+// -- restarting the CSS animation from scratch (remove, reflow, re-add) so it
+// plays in full even if a rare ambient cycle had already left it mid-flight.
+function triggerChase(): void {
+  if (prefersReducedMotion) return;
+  const els = [...fishSchoolEls, sharkEl];
+  els.forEach((el) => el?.classList.remove("chase-active"));
+  void document.body.offsetWidth;
+  els.forEach((el) => el?.classList.add("chase-active"));
 }
 
 function animateTransition(from: Stage, to: Stage): void {
   animating = true;
   nextButton?.setAttribute("disabled", "true");
   const looping = isLoopTransition(from, to);
+  if (to === "senescent") triggerChase();
 
   if (prefersReducedMotion) {
     current = to;
@@ -83,6 +109,7 @@ function animateTransition(from: Stage, to: Stage): void {
       return;
     }
     current = to;
+    applyButtonMood(to);
     if (currentLabelEl) currentLabelEl.textContent = STAGE_INFO[to].label;
     animating = false;
     nextButton?.removeAttribute("disabled");
