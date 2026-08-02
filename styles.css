@@ -213,6 +213,39 @@ h1 {
   animation: scuttle-crab 13s ease-in-out infinite alternate;
 }
 
+/* The one bright note in the background layer -- everything else here sits
+   at low opacity in a single muted hue, but a comb jelly's whole appeal is
+   the rainbow shimmer, so it's allowed to actually pop. */
+.comb-jelly {
+  top: 68%;
+  left: -14%;
+  width: 4.2rem;
+  opacity: 0.85;
+  animation: drift-comb-jelly 46s ease-in-out infinite;
+  animation-delay: -18s;
+}
+
+.comb-row {
+  opacity: 0.5;
+  animation: comb-shimmer 1.8s ease-in-out infinite;
+}
+
+.comb-row-2 {
+  animation-delay: 0.15s;
+}
+
+.comb-row-3 {
+  animation-delay: 0.3s;
+}
+
+.comb-row-4 {
+  animation-delay: 0.45s;
+}
+
+.comb-row-5 {
+  animation-delay: 0.6s;
+}
+
 /* easter egg: parked offscreen almost the whole cycle, then a fast dash --
    the school flees a beat before the shark's own dash window catches up. */
 
@@ -396,6 +429,66 @@ h1 {
 
   100% {
     translate: 126vw 4vh;
+  }
+}
+
+@keyframes drift-comb-jelly {
+  0% {
+    translate: 0 0;
+    rotate: 0deg;
+  }
+
+  10% {
+    rotate: 6deg;
+  }
+
+  20% {
+    rotate: -5deg;
+  }
+
+  30% {
+    rotate: 6deg;
+  }
+
+  40% {
+    rotate: -4deg;
+  }
+
+  50% {
+    translate: 60vw 4vh;
+    rotate: 5deg;
+  }
+
+  60% {
+    rotate: -6deg;
+  }
+
+  70% {
+    rotate: 5deg;
+  }
+
+  80% {
+    rotate: -4deg;
+  }
+
+  90% {
+    rotate: 6deg;
+  }
+
+  100% {
+    translate: 128vw -6vh;
+    rotate: 0deg;
+  }
+}
+
+@keyframes comb-shimmer {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+
+  50% {
+    opacity: 1;
   }
 }
 
