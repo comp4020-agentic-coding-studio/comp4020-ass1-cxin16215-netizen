@@ -783,10 +783,7 @@ dialog.bottle-dialog {
   top: 50%;
   left: 50%;
   z-index: 100;
-  display: flex;
   overflow: hidden;
-  flex-direction: column;
-  justify-content: center;
   width: min(90vw, 28rem);
   min-height: min(85vh, 27rem);
   padding: 0;
@@ -795,6 +792,16 @@ dialog.bottle-dialog {
   border-radius: 1rem;
   color: #1e3a3a;
   box-shadow: 0 0 40px 10px rgb(0 0 0 / 45%);
+}
+
+/* Flex layout (for vertically centering the content card) only applies once
+   the dialog actually has the [open] attribute -- setting `display` on the
+   bare selector would override the UA's `dialog:not([open]) { display: none }`
+   default and leave the dialog visibly stuck open. */
+dialog.bottle-dialog[open] {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 
 dialog.bottle-dialog::backdrop {
