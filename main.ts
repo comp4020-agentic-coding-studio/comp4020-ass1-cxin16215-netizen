@@ -2,6 +2,8 @@ import { STAGES, STAGE_INFO, KEYFRAME_PARAMS, ease, nextStage, isLoopTransition,
 
 const TRANSITION_MS = 900;
 const PARTICLE_COUNT = 28;
+const FLEX_DISPLACE_PULSE = 3;
+const FLEX_SCALE_PULSE = 0.04;
 
 const scene = document.querySelector<SVGSVGElement>("#jelly-scene");
 const stageEls = new Map(
@@ -14,16 +16,21 @@ const currentLabelEl = document.querySelector<HTMLParagraphElement>("#current-st
 const particlesContainer = document.querySelector<HTMLDivElement>(".particles");
 const fishSchoolEls = Array.from(document.querySelectorAll<SVGSVGElement>(".fish-school"));
 const sharkEl = document.querySelector<SVGSVGElement>(".shark");
+const urchinEls = Array.from(document.querySelectorAll<SVGSVGElement>(".urchin"));
+const dizzyFishEl = document.querySelector<SVGSVGElement>(".fish-school-3");
 const nextButton = document.querySelector<HTMLButtonElement>("#next-stage");
 const infoButton = document.querySelector<HTMLButtonElement>("#info-toggle");
 const infoDialog = document.querySelector<HTMLDialogElement>("#stage-info");
 const infoTitle = document.querySelector<HTMLHeadingElement>("#stage-info-title");
 const infoDetail = document.querySelector<HTMLParagraphElement>("#stage-info-detail");
 const infoClose = document.querySelector<HTMLButtonElement>("#stage-info-close");
+const soundToggle = document.querySelector<HTMLButtonElement>("#sound-toggle");
 const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 let current: Stage = "polyp";
 let animating = false;
+let soundMuted = false;
+let audioCtx: AudioContext | null = null;
 
 function applyParams(stage: Stage): void {
   const p = KEYFRAME_PARAMS[stage];
@@ -70,12 +77,70 @@ function triggerChase(): void {
   els.forEach((el) => el?.classList.remove("chase-active"));
   void document.body.offsetWidth;
   els.forEach((el) => el?.classList.add("chase-active"));
+  if (Math.random() < 0.5) triggerUrchinRain();
+}
+
+// A second, rarer easter egg riding along with the chase: about half the
+// time, a scatter of sea urchins also falls. There's no real collision --
+// urchin-1's fall is just loosely timed to cross fish-school-3's height
+// around when the chase carries it past, so the dizzy-stars payoff reads as
+// a coincidental bonk rather than a scripted hit.
+function triggerUrchinRain(): void {
+  urchinEls.forEach((el) => el.classList.remove("urchin-active"));
+  void document.body.offsetWidth;
+  urchinEls.forEach((el) => el.classList.add("urchin-active"));
+  window.setTimeout(() => dizzyFishEl?.classList.add("dizzy"), 1100);
+  window.setTimeout(() => dizzyFishEl?.classList.remove("dizzy"), 2900);
+}
+
+// Procedural sound effects -- synthesised with the Web Audio API rather than
+// shipped as audio files, in keeping with the rest of the page (every visual
+// is hand-authored SVG/CSS, no external assets). Lazily created and resumed
+// only from within a click handler, so it satisfies the browser's autoplay
+// gesture requirement.
+function ensureAudioCtx(): AudioContext {
+  if (!audioCtx) audioCtx = new AudioContext();
+  if (audioCtx.state === "suspended") void audioCtx.resume();
+  return audioCtx;
+}
+
+// A short synthesised "blub": two slightly detuned sine tones, each gliding
+// down in pitch with a fast exponential decay, for a rounder bubble timbre
+// than a single pure tone.
+function playBubble(baseFreq = 520): void {
+  if (soundMuted) return;
+  const ctx = ensureAudioCtx();
+  const now = ctx.currentTime;
+  [1, 1.5].forEach((detune, i) => {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    osc.type = "sine";
+    osc.frequency.setValueAtTime(baseFreq * detune, now);
+    osc.frequency.exponentialRampToValueAtTime(baseFreq * detune * 0.4, now + 0.18);
+    gain.gain.setValueAtTime(0.0001, now);
+    gain.gain.exponentialRampToValueAtTime(i === 0 ? 0.16 : 0.08, now + 0.015);
+    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.22);
+    osc.connect(gain).connect(ctx.destination);
+    osc.start(now);
+    osc.stop(now + 0.24);
+  });
+}
+
+// A richer swell of ascending bubbles for the loop-reset, under the
+// ouroboros/senescent-glow flourish.
+function playLoopSwell(): void {
+  if (soundMuted) return;
+  [420, 560, 700, 880].forEach((freq, i) => {
+    window.setTimeout(() => playBubble(freq), i * 140);
+  });
 }
 
 function animateTransition(from: Stage, to: Stage): void {
   animating = true;
   nextButton?.setAttribute("disabled", "true");
   const looping = isLoopTransition(from, to);
+  if (looping) playLoopSwell();
+  else playBubble();
   if (to === "senescent") triggerChase();
 
   if (prefersReducedMotion) {
@@ -96,13 +161,21 @@ function animateTransition(from: Stage, to: Stage): void {
   function frame(now: number): void {
     const raw = Math.min((now - start) / TRANSITION_MS, 1);
     const eased = ease(raw);
+    // A bell-curve "flex" peaking mid-transition, on top of the linear blend
+    // -- the tentacles wobble a touch wider and the whole body overshoots its
+    // target size by a hair before settling, so every stage change reads as
+    // a living flex rather than a flat crossfade.
+    const flex = Math.sin(raw * Math.PI);
     if (fromEl) fromEl.style.opacity = String(1 - eased);
     if (toEl) toEl.style.opacity = String(eased);
     scene?.style.setProperty("--hue", `${blendParams(from, to, raw, "hueDeg")}deg`);
     scene?.style.setProperty("--sat", String(blendParams(from, to, raw, "saturate")));
-    scene?.style.setProperty("--scale", String(blendParams(from, to, raw, "scale")));
+    scene?.style.setProperty("--scale", String(blendParams(from, to, raw, "scale") + flex * FLEX_SCALE_PULSE));
     glowBlur?.setAttribute("stdDeviation", String(blendParams(from, to, raw, "blurStd")));
-    organicDisplace?.setAttribute("scale", String(blendParams(from, to, raw, "displaceScale")));
+    organicDisplace?.setAttribute(
+      "scale",
+      String(blendParams(from, to, raw, "displaceScale") + flex * FLEX_DISPLACE_PULSE),
+    );
 
     if (raw < 1) {
       requestAnimationFrame(frame);
@@ -144,6 +217,13 @@ infoButton?.addEventListener("click", () => {
 });
 
 infoClose?.addEventListener("click", () => infoDialog?.close());
+
+soundToggle?.addEventListener("click", () => {
+  soundMuted = !soundMuted;
+  soundToggle.setAttribute("aria-pressed", String(soundMuted));
+  soundToggle.setAttribute("aria-label", soundMuted ? "Unmute sound effects" : "Mute sound effects");
+  if (!soundMuted) playBubble();
+});
 
 spawnParticles();
 showStage(current);
