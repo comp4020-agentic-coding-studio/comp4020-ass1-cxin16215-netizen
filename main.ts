@@ -157,6 +157,38 @@ function playLoopSwell(): void {
   });
 }
 
+// The bottle hitting the water: a filtered noise burst (the "splash") swept
+// from bright to dull as it decays, layered under a single low bubble (the
+// "plop") for weight. Synthesised rather than a sample, same as every other
+// sound here.
+function playSplash(): void {
+  if (soundMuted) return;
+  const ctx = ensureAudioCtx();
+  const now = ctx.currentTime;
+
+  const bufferSize = Math.floor(ctx.sampleRate * 0.3);
+  const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+  const data = noiseBuffer.getChannelData(0);
+  for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+
+  const noise = ctx.createBufferSource();
+  noise.buffer = noiseBuffer;
+  const noiseFilter = ctx.createBiquadFilter();
+  noiseFilter.type = "bandpass";
+  noiseFilter.frequency.setValueAtTime(2000, now);
+  noiseFilter.frequency.exponentialRampToValueAtTime(350, now + 0.3);
+  noiseFilter.Q.setValueAtTime(0.7, now);
+  const noiseGain = ctx.createGain();
+  noiseGain.gain.setValueAtTime(0.0001, now);
+  noiseGain.gain.exponentialRampToValueAtTime(0.22, now + 0.015);
+  noiseGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.32);
+  noise.connect(noiseFilter).connect(noiseGain).connect(ctx.destination);
+  noise.start(now);
+  noise.stop(now + 0.32);
+
+  playBubble(200);
+}
+
 function animateTransition(from: Stage, to: Stage): void {
   animating = true;
   nextButton?.setAttribute("disabled", "true");
@@ -248,6 +280,7 @@ infoClose?.addEventListener("click", () => infoDialog?.close());
 bottleDialogClose?.addEventListener("click", () => bottleDialog?.close());
 
 bottleThrow?.addEventListener("click", () => {
+  playSplash();
   if (prefersReducedMotion) {
     bottleDialog?.close();
     return;

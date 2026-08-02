@@ -783,8 +783,12 @@ dialog.bottle-dialog {
   top: 50%;
   left: 50%;
   z-index: 100;
+  display: flex;
   overflow: hidden;
-  width: min(90vw, 26rem);
+  flex-direction: column;
+  justify-content: center;
+  width: min(90vw, 28rem);
+  min-height: min(85vh, 27rem);
   padding: 0;
   translate: -50% -50%;
   border: 1px solid rgb(255 255 255 / 45%);
@@ -820,8 +824,9 @@ dialog.bottle-dialog::backdrop {
 .bottle-content {
   position: relative;
   z-index: 1;
-  margin: 1.75rem 1.5rem 1.5rem;
-  padding: 1rem 1.1rem;
+  flex-shrink: 0;
+  margin: 0 1.75rem;
+  padding: 0.9rem 1.1rem;
   border-radius: 0.75rem;
   background: rgb(255 252 240 / 88%);
   box-shadow: 0 4px 18px rgb(20 60 50 / 18%);
@@ -905,6 +910,92 @@ dialog.bottle-dialog::backdrop {
    island on the horizon rather than being flung off-screen. */
 .bottle-dialog.is-throwing .bottle-icon {
   animation: bottle-drift 1.4s ease-in forwards;
+}
+
+/* The splash sits at the bottle's fixed launch point rather than travelling
+   with it -- an impact marker, not part of the drift. */
+.bottle-splash {
+  position: absolute;
+  bottom: 2.2rem;
+  left: 52%;
+  z-index: 1;
+  width: 2.5rem;
+  height: 1rem;
+  translate: -50% 50%;
+  pointer-events: none;
+}
+
+.splash-ring {
+  position: absolute;
+  inset: 0;
+  border: 2px solid rgb(255 255 255 / 70%);
+  border-radius: 50%;
+  opacity: 0;
+}
+
+.bottle-dialog.is-throwing .splash-ring {
+  animation: splash-ring-expand 0.7s ease-out forwards;
+}
+
+.splash-ring-2 {
+  animation-delay: 0.12s;
+}
+
+.splash-drop {
+  position: absolute;
+  bottom: 50%;
+  left: 50%;
+  width: 0.22rem;
+  height: 0.22rem;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 85%);
+  opacity: 0;
+}
+
+.bottle-dialog.is-throwing .splash-drop {
+  animation: splash-drop-arc 0.6s ease-out forwards;
+}
+
+.splash-drop-2 {
+  left: 40%;
+  animation-delay: 0.03s;
+}
+
+.splash-drop-3 {
+  left: 63%;
+  animation-delay: 0.06s;
+}
+
+@keyframes splash-ring-expand {
+  0% {
+    scale: 0.3;
+    opacity: 0.8;
+  }
+
+  100% {
+    scale: 2.6;
+    opacity: 0;
+  }
+}
+
+@keyframes splash-drop-arc {
+  0% {
+    translate: -50% 0;
+    scale: 0.6;
+    opacity: 0.9;
+  }
+
+  40% {
+    translate: -50% -0.85rem;
+    scale: 1;
+    opacity: 1;
+  }
+
+  100% {
+    translate: -50% 0.35rem;
+    scale: 0.4;
+    opacity: 0;
+  }
 }
 
 @keyframes bottle-wave-shift {
@@ -1109,7 +1200,8 @@ dialog#stage-info p {
     display: none;
   }
 
-  .bottle-icon {
+  .bottle-icon,
+  .bottle-splash {
     display: none;
   }
 

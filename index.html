@@ -636,7 +636,7 @@
             <cite>——《庄子·齐物论》</cite>
           </blockquote>
           <p class="bottle-hint">写下点什么，交给海浪——不会被保存，也不会被发送到任何地方。</p>
-          <textarea id="bottle-message" rows="3" placeholder="写给这一刻的话……" aria-label="写给海浪的话"></textarea>
+          <textarea id="bottle-message" rows="2" placeholder="写给这一刻的话……" aria-label="写给海浪的话"></textarea>
           <div class="bottle-actions">
             <button id="bottle-throw" type="button" class="primary-button bottle-throw-button">扔出去</button>
           </div>
@@ -653,6 +653,17 @@
           />
           <path d="M8 17h8" stroke="#0d2b3a" stroke-width="0.6" opacity="0.4" />
         </svg>
+
+        <!-- A one-shot splash where the bottle first meets the water --
+             expanding rings plus a few flung droplets, timed to the start of
+             the drift so the throw reads as an impact, not a fade-in. -->
+        <div class="bottle-splash" aria-hidden="true">
+          <span class="splash-ring"></span>
+          <span class="splash-ring splash-ring-2"></span>
+          <span class="splash-drop"></span>
+          <span class="splash-drop splash-drop-2"></span>
+          <span class="splash-drop splash-drop-3"></span>
+        </div>
       </dialog>
     </main>
     <script type="module" src="./main.ts"></script>
