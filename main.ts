@@ -77,15 +77,16 @@ function triggerChase(): void {
   els.forEach((el) => el?.classList.remove("chase-active"));
   void document.body.offsetWidth;
   els.forEach((el) => el?.classList.add("chase-active"));
-  if (Math.random() < 0.5) triggerUrchinRain();
 }
 
-// A second, rarer easter egg riding along with the chase: about half the
-// time, a scatter of sea urchins also falls. There's no real collision --
-// urchin-1's fall is just loosely timed to cross fish-school-3's height
-// around when the chase carries it past, so the dizzy-stars payoff reads as
-// a coincidental bonk rather than a scripted hit.
+// A separate, independent easter egg with its own occasional trigger (see
+// call site in animateTransition) so it never piles onto the chase -- one
+// special thing happening at a time, not two competing for attention.
+// fish-school-3 sits still for most of its idle loop, so a fall timed
+// against a stationary target still reads as a plausible bonk without any
+// real collision detection.
 function triggerUrchinRain(): void {
+  if (prefersReducedMotion) return;
   urchinEls.forEach((el) => el.classList.remove("urchin-active"));
   void document.body.offsetWidth;
   urchinEls.forEach((el) => el.classList.add("urchin-active"));
@@ -104,33 +105,36 @@ function ensureAudioCtx(): AudioContext {
   return audioCtx;
 }
 
-// A short synthesised "blub": two slightly detuned sine tones, each gliding
-// down in pitch with a fast exponential decay, for a rounder bubble timbre
-// than a single pure tone.
-function playBubble(baseFreq = 520): void {
+// A short synthesised "blub": a single sine tone gliding gently down in
+// pitch, softened through a lowpass filter so the fast envelope doesn't
+// read as a click -- closer to a soft underwater pop than a beep.
+function playBubble(baseFreq = 460): void {
   if (soundMuted) return;
   const ctx = ensureAudioCtx();
   const now = ctx.currentTime;
-  [1, 1.5].forEach((detune, i) => {
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-    osc.type = "sine";
-    osc.frequency.setValueAtTime(baseFreq * detune, now);
-    osc.frequency.exponentialRampToValueAtTime(baseFreq * detune * 0.4, now + 0.18);
-    gain.gain.setValueAtTime(0.0001, now);
-    gain.gain.exponentialRampToValueAtTime(i === 0 ? 0.16 : 0.08, now + 0.015);
-    gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.22);
-    osc.connect(gain).connect(ctx.destination);
-    osc.start(now);
-    osc.stop(now + 0.24);
-  });
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  const filter = ctx.createBiquadFilter();
+  osc.type = "sine";
+  osc.frequency.setValueAtTime(baseFreq, now);
+  osc.frequency.exponentialRampToValueAtTime(baseFreq * 0.55, now + 0.16);
+  filter.type = "lowpass";
+  filter.frequency.setValueAtTime(1200, now);
+  filter.Q.setValueAtTime(0.7, now);
+  gain.gain.setValueAtTime(0.0001, now);
+  gain.gain.exponentialRampToValueAtTime(0.18, now + 0.02);
+  gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.26);
+  osc.connect(filter).connect(gain).connect(ctx.destination);
+  osc.start(now);
+  osc.stop(now + 0.28);
 }
 
 // A richer swell of ascending bubbles for the loop-reset, under the
-// ouroboros/senescent-glow flourish.
+// ouroboros/senescent-glow flourish -- a plain major arpeggio (1, 5/4, 3/2,
+// 2) so the run resolves rather than just climbing.
 function playLoopSwell(): void {
   if (soundMuted) return;
-  [420, 560, 700, 880].forEach((freq, i) => {
+  [420, 525, 630, 840].forEach((freq, i) => {
     window.setTimeout(() => playBubble(freq), i * 140);
   });
 }
@@ -141,7 +145,12 @@ function animateTransition(from: Stage, to: Stage): void {
   const looping = isLoopTransition(from, to);
   if (looping) playLoopSwell();
   else playBubble();
+  // The two "extra" easter eggs never compete for the same moment: the
+  // chase owns entering senescence, the loop-reset already has its own
+  // ouroboros flourish, and the urchin rain gets the quieter transitions
+  // in between, on its own independent random chance.
   if (to === "senescent") triggerChase();
+  else if (!looping && Math.random() < 0.35) triggerUrchinRain();
 
   if (prefersReducedMotion) {
     current = to;
