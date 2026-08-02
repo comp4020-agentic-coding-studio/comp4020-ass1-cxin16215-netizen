@@ -783,31 +783,62 @@ dialog.bottle-dialog {
   top: 50%;
   left: 50%;
   z-index: 100;
-  overflow: visible;
+  overflow: hidden;
   width: min(90vw, 26rem);
-  padding: 1.75rem;
+  padding: 0;
   translate: -50% -50%;
-  border: 1px solid rgb(127 231 214 / 30%);
+  border: 1px solid rgb(255 255 255 / 45%);
   border-radius: 1rem;
-  color: #dff6f4;
-  background: linear-gradient(180deg, #0d2b3a, #061a26);
-  box-shadow: 0 0 40px 10px rgb(0 0 0 / 50%);
+  color: #1e3a3a;
+  box-shadow: 0 0 40px 10px rgb(0 0 0 / 45%);
 }
 
 dialog.bottle-dialog::backdrop {
   background: rgb(1 3 6 / 70%);
 }
 
-.bottle-dialog h2 {
-  margin: 0 0 1rem;
+/* The sunlit beach scene is a full-bleed SVG background, deliberately
+   daylight-warm against the deep-sea palette used everywhere else -- this
+   moment is a breath of open air before the loop continues. */
+.bottle-scene {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.bottle-wave {
+  animation: bottle-wave-shift 5s ease-in-out infinite;
+}
+
+.bottle-wave-2 {
+  animation-duration: 6.5s;
+  animation-direction: reverse;
+}
+
+.bottle-content {
+  position: relative;
+  z-index: 1;
+  margin: 1.75rem 1.5rem 1.5rem;
+  padding: 1rem 1.1rem;
+  border-radius: 0.75rem;
+  background: rgb(255 252 240 / 88%);
+  box-shadow: 0 4px 18px rgb(20 60 50 / 18%);
+  transition: opacity 0.35s ease;
+}
+
+.bottle-content h2 {
+  margin: 0 0 0.85rem;
   font-size: 1.1rem;
+  color: #1e3a3a;
 }
 
 .bottle-quote {
-  margin: 0 0 1rem;
+  margin: 0 0 0.85rem;
   padding-left: 0.9rem;
-  border-left: 2px solid rgb(127 231 214 / 45%);
-  color: #b9dedb;
+  border-left: 2px solid rgb(31 143 168 / 45%);
+  color: #35524f;
   font-size: 0.95rem;
   font-style: italic;
   line-height: 1.6;
@@ -816,32 +847,32 @@ dialog.bottle-dialog::backdrop {
 .bottle-quote cite {
   display: block;
   margin-top: 0.35rem;
-  color: #6fa8a0;
+  color: #5c7b74;
   font-size: 0.8rem;
   font-style: normal;
 }
 
 .bottle-hint {
   margin: 0 0 0.75rem;
-  color: #6fa8a0;
+  color: #5c7b74;
   font-size: 0.8rem;
   line-height: 1.5;
 }
 
-.bottle-dialog textarea {
+.bottle-content textarea {
   box-sizing: border-box;
   width: 100%;
   padding: 0.65rem 0.75rem;
-  border: 1px solid rgb(127 231 214 / 30%);
+  border: 1px solid rgb(31 143 168 / 35%);
   border-radius: 0.5rem;
-  background: rgb(6 26 38 / 70%);
-  color: #dff6f4;
+  background: rgb(255 255 255 / 80%);
+  color: #1e3a3a;
   font: inherit;
   resize: vertical;
 }
 
-.bottle-dialog textarea:focus-visible {
-  outline: 2px solid #7fe7d6;
+.bottle-content textarea:focus-visible {
+  outline: 2px solid #1f8fa8;
   outline-offset: 2px;
 }
 
@@ -856,47 +887,67 @@ dialog.bottle-dialog::backdrop {
   font-size: 0.95rem;
 }
 
-.bottle-quote,
-textarea#bottle-message,
-.bottle-actions {
-  transition: opacity 0.35s ease;
-}
-
-.bottle-dialog.is-throwing .bottle-quote,
-.bottle-dialog.is-throwing textarea#bottle-message,
-.bottle-dialog.is-throwing .bottle-actions {
+.bottle-dialog.is-throwing .bottle-content {
   opacity: 0;
 }
 
 .bottle-icon {
   position: absolute;
-  bottom: 1.5rem;
-  left: 50%;
+  left: 52%;
+  bottom: 2.4rem;
+  z-index: 1;
   translate: -50% 0;
   opacity: 0;
   pointer-events: none;
 }
 
+/* Not thrown -- set adrift: it bobs on the waves and shrinks toward the
+   island on the horizon rather than being flung off-screen. */
 .bottle-dialog.is-throwing .bottle-icon {
-  animation: bottle-throw 0.9s ease-in forwards;
+  animation: bottle-drift 1.4s ease-in forwards;
 }
 
-@keyframes bottle-throw {
+@keyframes bottle-wave-shift {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  50% {
+    transform: translateX(-14px);
+  }
+}
+
+@keyframes bottle-drift {
   0% {
-    translate: -50% 0;
-    rotate: 0deg;
+    left: 52%;
+    bottom: 2.4rem;
+    rotate: -6deg;
+    scale: 1;
     opacity: 1;
   }
 
-  55% {
-    translate: calc(-50% + 7rem) -6rem;
-    rotate: 190deg;
-    opacity: 1;
+  15% {
+    rotate: 6deg;
+  }
+
+  30% {
+    rotate: -5deg;
+  }
+
+  45% {
+    rotate: 5deg;
+  }
+
+  60% {
+    rotate: -4deg;
   }
 
   100% {
-    translate: calc(-50% + 15rem) 9rem;
-    rotate: 380deg;
+    left: 20%;
+    bottom: 5.8rem;
+    rotate: 0deg;
+    scale: 0.3;
     opacity: 0;
   }
 }
@@ -948,6 +999,15 @@ dialog#stage-info p {
 
 .dialog-close:hover {
   color: #dff6f4;
+}
+
+.bottle-dialog .dialog-close {
+  z-index: 2;
+  color: #1e3a3a;
+}
+
+.bottle-dialog .dialog-close:hover {
+  color: #06222a;
 }
 
 .reference-photo {
@@ -1051,6 +1111,11 @@ dialog#stage-info p {
 
   .bottle-icon {
     display: none;
+  }
+
+  .bottle-wave,
+  .bottle-wave-2 {
+    animation: none;
   }
 
   #jelly-scene .stage,

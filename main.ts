@@ -256,7 +256,7 @@ bottleThrow?.addEventListener("click", () => {
   window.setTimeout(() => {
     bottleDialog?.close();
     bottleDialog?.classList.remove("is-throwing");
-  }, 900);
+  }, 1400);
 });
 
 soundToggle?.addEventListener("click", () => {
