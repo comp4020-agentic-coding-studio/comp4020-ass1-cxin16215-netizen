@@ -572,6 +572,34 @@
         <div class="reference-photo" aria-hidden="true"><span>Reference photo -- placeholder</span></div>
         <p id="stage-info-detail"></p>
       </dialog>
+
+      <!-- Shown once, the first time the loop is discovered -- a quiet aside,
+           not another mechanic. Nothing typed here is stored or sent
+           anywhere; the "throwing" is the whole point. -->
+      <dialog id="bottle-dialog" class="bottle-dialog" aria-labelledby="bottle-dialog-title">
+        <button id="bottle-dialog-close" type="button" class="dialog-close" aria-label="Close">&times;</button>
+        <h2 id="bottle-dialog-title">循环，走完了一次</h2>
+        <blockquote class="bottle-quote">
+          方生方死，方死方生。
+          <cite>——《庄子·齐物论》</cite>
+        </blockquote>
+        <p class="bottle-hint">写下点什么，交给海浪——不会被保存，也不会被发送到任何地方。</p>
+        <textarea id="bottle-message" rows="3" placeholder="写给这一刻的话……" aria-label="写给海浪的话"></textarea>
+        <div class="bottle-actions">
+          <button id="bottle-throw" type="button" class="primary-button bottle-throw-button">扔出去</button>
+        </div>
+        <svg class="bottle-icon" viewBox="0 0 24 40" width="26" aria-hidden="true" focusable="false">
+          <rect x="9" y="1" width="6" height="3" rx="1" fill="#5fc9b8" />
+          <path
+            d="M9 4h6v5l3 4v23a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V13l3-4Z"
+            fill="#7fe7d6"
+            opacity="0.85"
+            stroke="#0d2b3a"
+            stroke-width="0.6"
+          />
+          <path d="M8 17h8" stroke="#0d2b3a" stroke-width="0.6" opacity="0.4" />
+        </svg>
+      </dialog>
     </main>
     <script type="module" src="./main.ts"></script>
   </body>

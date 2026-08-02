@@ -25,12 +25,17 @@ const infoTitle = document.querySelector<HTMLHeadingElement>("#stage-info-title"
 const infoDetail = document.querySelector<HTMLParagraphElement>("#stage-info-detail");
 const infoClose = document.querySelector<HTMLButtonElement>("#stage-info-close");
 const soundToggle = document.querySelector<HTMLButtonElement>("#sound-toggle");
+const bottleDialog = document.querySelector<HTMLDialogElement>("#bottle-dialog");
+const bottleDialogClose = document.querySelector<HTMLButtonElement>("#bottle-dialog-close");
+const bottleMessage = document.querySelector<HTMLTextAreaElement>("#bottle-message");
+const bottleThrow = document.querySelector<HTMLButtonElement>("#bottle-throw");
 const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
 let current: Stage = "polyp";
 let animating = false;
 let soundMuted = false;
 let audioCtx: AudioContext | null = null;
+let hasShownBottleDialog = false;
 
 function applyParams(stage: Stage): void {
   const p = KEYFRAME_PARAMS[stage];
@@ -65,7 +70,20 @@ function flourishLoop(): void {
   if (!prefersReducedMotion) rippleAnim?.beginElement();
   window.setTimeout(() => {
     scene?.classList.remove("is-resetting");
+    maybeShowBottleDialog();
   }, 2800);
+}
+
+// A one-time aside, not a second mechanic: the first time the loop is
+// discovered, a quiet dialog offers to let the visitor put something into
+// the loop themselves. Nothing typed is stored or sent anywhere, so there's
+// nothing to clean up if the tab just closes.
+function maybeShowBottleDialog(): void {
+  if (hasShownBottleDialog) return;
+  hasShownBottleDialog = true;
+  if (bottleMessage) bottleMessage.value = "";
+  bottleDialog?.classList.remove("is-throwing");
+  bottleDialog?.showModal();
 }
 
 // Reaching senescence reliably fires the fish-school/shark chase easter egg
@@ -226,6 +244,20 @@ infoButton?.addEventListener("click", () => {
 });
 
 infoClose?.addEventListener("click", () => infoDialog?.close());
+
+bottleDialogClose?.addEventListener("click", () => bottleDialog?.close());
+
+bottleThrow?.addEventListener("click", () => {
+  if (prefersReducedMotion) {
+    bottleDialog?.close();
+    return;
+  }
+  bottleDialog?.classList.add("is-throwing");
+  window.setTimeout(() => {
+    bottleDialog?.close();
+    bottleDialog?.classList.remove("is-throwing");
+  }, 900);
+});
 
 soundToggle?.addEventListener("click", () => {
   soundMuted = !soundMuted;
