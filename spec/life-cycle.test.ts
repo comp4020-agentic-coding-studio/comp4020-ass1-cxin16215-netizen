@@ -23,6 +23,30 @@ describe("life-cycle page: static contract", () => {
     expect(doc.querySelector("#stage-info")).toBeTruthy();
   });
 
+  it("ships a reference image for the stage dialog with alt text", () => {
+    const photo = doc.querySelector<HTMLImageElement>("#stage-info-photo");
+    expect(photo).toBeTruthy();
+    expect(photo!.getAttribute("alt")?.trim().length).toBeGreaterThan(0);
+    expect(photo!.getAttribute("src")).toMatch(/assets\/stages\/.+\.png$/);
+  });
+
+  it("credits the stage image as AI-generated and names a reference species", () => {
+    const credit = doc.querySelector(".image-credit");
+    expect(credit?.textContent?.toLowerCase()).toMatch(/ai-generated/);
+    expect(doc.querySelector(".specimen-line")?.textContent).toMatch(/Reference species/i);
+    expect(doc.querySelector("#stage-info-specimen")).toBeTruthy();
+  });
+
+  it("ships a rebirth explainer dialog unlocked after one cycle", () => {
+    const toggle = doc.querySelector("#rebirth-toggle");
+    const dialog = doc.querySelector("#rebirth-info");
+    expect(toggle).toBeTruthy();
+    expect(toggle?.getAttribute("aria-controls")).toBe("rebirth-info");
+    expect(toggle?.hasAttribute("hidden")).toBe(true);
+    expect(dialog).toBeTruthy();
+    expect(dialog?.textContent?.toLowerCase()).toMatch(/transdifferentiation|reverse development/);
+  });
+
   it("names the interactive art with an accessible name (it isn't an <img>)", () => {
     const svg = doc.querySelector('svg[role="img"]');
     expect(svg?.getAttribute("aria-label")).toBeTruthy();
@@ -71,6 +95,16 @@ describe("life-cycle logic: pure functions", () => {
       const spoiler = /polyp again|revert|reset|loop|repeat|immortal/;
       expect(STAGE_INFO[stage].caption.toLowerCase()).not.toMatch(spoiler);
       expect(STAGE_INFO[stage].detail.toLowerCase()).not.toMatch(spoiler);
+    }
+  });
+
+  it("names a real specimen stand-in and an image path for every stage", () => {
+    for (const stage of STAGES) {
+      const info = STAGE_INFO[stage];
+      expect(info.specimen.length).toBeGreaterThan(0);
+      expect(info.specimenNote.length).toBeGreaterThan(0);
+      expect(info.image).toBe(`./assets/stages/${stage}.png`);
+      expect(info.imageAlt.length).toBeGreaterThan(0);
     }
   });
 });

@@ -4,6 +4,12 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Turritopsis</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500;1,9..144,600&family=Outfit:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
@@ -245,11 +251,9 @@
       </svg>
     </div>
 
-    <header>
-      <nav aria-label="Primary">
-        <a href="./">Home</a>
-      </nav>
-    </header>
+    <nav class="sr-only" aria-label="Primary">
+      <a href="#jelly-scene">Life-cycle stage</a>
+    </nav>
     <main>
       <h1>The Immortal Jellyfish</h1>
 
@@ -302,18 +306,19 @@
             <stop offset="100%" stop-color="#ffb199" stop-opacity="0" />
           </linearGradient>
           <!-- ambientGlow: a soft wash behind the whole scene, like a shaft of
-               surface light -- depth cue, not a shape anyone reads directly. -->
+               surface light -- depth cue, not a shape anyone reads directly.
+               Kept very faint so it never reads as a lit "card" behind the animal. -->
           <radialGradient id="ambientGlow" cx="50%" cy="12%" r="70%">
-            <stop offset="0%" stop-color="#eafcff" stop-opacity="0.3" />
-            <stop offset="55%" stop-color="#59e8d0" stop-opacity="0.1" />
+            <stop offset="0%" stop-color="#eafcff" stop-opacity="0.08" />
+            <stop offset="55%" stop-color="#59e8d0" stop-opacity="0.03" />
             <stop offset="100%" stop-color="#0b3d55" stop-opacity="0" />
           </radialGradient>
-          <filter id="glow" x="-60%" y="-60%" width="220%" height="220%">
-            <feGaussianBlur id="glowBlur" in="SourceGraphic" stdDeviation="3" result="blur" />
+          <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+            <feGaussianBlur id="glowBlur" in="SourceGraphic" stdDeviation="1.5" result="blur" />
             <feColorMatrix
               in="blur"
               type="matrix"
-              values="1.4 0 0 0 0  0 1.4 0 0 0  0 0 1.4 0 0  0 0 0 1 0"
+              values="1.15 0 0 0 0  0 1.15 0 0 0  0 0 1.15 0 0  0 0 0 0.7 0"
               result="bloom"
             />
             <feMerge>
@@ -382,7 +387,7 @@
         </defs>
 
         <!-- ambient light shaft: depth cue behind everything -->
-        <ellipse cx="200" cy="0" rx="260" ry="340" fill="url(#ambientGlow)" />
+        <ellipse cx="200" cy="0" rx="220" ry="280" fill="url(#ambientGlow)" opacity="0.55" />
 
         <!-- ouroboros: dormant infinity symbol, drawn only around a loop-reset --
              a lemniscate (two joined loops) rather than the plain ring this
@@ -402,21 +407,22 @@
           opacity="0"
         />
 
-        <!-- polyp: anchored stalk with a short tentacle crown. No visible
-             stomach/canals -- that patterning is a medusa-stage feature, so
-             the polyp stays pale and simple, a deliberate contrast against
-             the vivid medusae to come. -->
+        <!-- polyp: anchored stalk with a short tentacle crown. Framed via
+             stage-art so it sits in the optical centre of the scene instead of
+             stranded at the bottom of the 400 viewBox. -->
         <g class="stage" data-stage="polyp">
-          <ellipse cx="200" cy="330" rx="26" ry="8" fill="url(#tissueGradient)" opacity="0.6" />
-          <path d="M 190 260 Q 186 300 192 328 L 208 328 Q 214 300 210 260 Z" fill="url(#tissueGradient)" />
-          <ellipse cx="222" cy="322" rx="9" ry="5" fill="url(#tissueGradient)" opacity="0.7" />
-          <g class="tentacles" filter="url(#organic)">
-            <path d="M 190 262 Q 180 250 172 250" fill="none" stroke="url(#tentacleFade)" stroke-width="3" stroke-linecap="round" />
-            <path d="M 194 259 Q 187 244 180 240" fill="none" stroke="url(#tentacleFade)" stroke-width="3" stroke-linecap="round" />
-            <path d="M 198 257 Q 195 240 192 234" fill="none" stroke="url(#tentacleFade)" stroke-width="3" stroke-linecap="round" />
-            <path d="M 202 257 Q 205 240 208 234" fill="none" stroke="url(#tentacleFade)" stroke-width="3" stroke-linecap="round" />
-            <path d="M 206 259 Q 213 244 220 240" fill="none" stroke="url(#tentacleFade)" stroke-width="3" stroke-linecap="round" />
-            <path d="M 210 262 Q 220 250 228 250" fill="none" stroke="url(#tentacleFade)" stroke-width="3" stroke-linecap="round" />
+          <g class="stage-art" transform="translate(200 250) scale(1.55) translate(-200 -295)">
+            <ellipse cx="200" cy="330" rx="26" ry="8" fill="url(#tissueGradient)" opacity="0.6" />
+            <path d="M 190 260 Q 186 300 192 328 L 208 328 Q 214 300 210 260 Z" fill="url(#tissueGradient)" />
+            <ellipse cx="222" cy="322" rx="9" ry="5" fill="url(#tissueGradient)" opacity="0.7" />
+            <g class="tentacles" filter="url(#organic)">
+              <path d="M 190 262 Q 180 250 172 250" fill="none" stroke="url(#tentacleFade)" stroke-width="3" stroke-linecap="round" />
+              <path d="M 194 259 Q 187 244 180 240" fill="none" stroke="url(#tentacleFade)" stroke-width="3" stroke-linecap="round" />
+              <path d="M 198 257 Q 195 240 192 234" fill="none" stroke="url(#tentacleFade)" stroke-width="3" stroke-linecap="round" />
+              <path d="M 202 257 Q 205 240 208 234" fill="none" stroke="url(#tentacleFade)" stroke-width="3" stroke-linecap="round" />
+              <path d="M 206 259 Q 213 244 220 240" fill="none" stroke="url(#tentacleFade)" stroke-width="3" stroke-linecap="round" />
+              <path d="M 210 262 Q 220 250 228 250" fill="none" stroke="url(#tentacleFade)" stroke-width="3" stroke-linecap="round" />
+            </g>
           </g>
         </g>
 
@@ -546,10 +552,13 @@
       </svg>
 
       <p id="current-stage-label" class="current-stage-label" aria-live="polite">Polyp</p>
+      <p id="stage-caption" class="stage-caption" aria-live="polite">
+        Anchored to the seafloor, a colony of polyps buds slowly, waiting.
+      </p>
 
       <div class="controls">
         <button id="next-stage" type="button" class="primary-button">
-          Let time pass
+          <span id="next-stage-label">Let time pass</span>
           <span class="button-burst" aria-hidden="true">
             <span class="spark"></span>
             <span class="spark"></span>
@@ -575,8 +584,8 @@
           id="sound-toggle"
           type="button"
           class="info-button sound-button"
-          aria-pressed="false"
-          aria-label="Mute sound effects"
+          aria-pressed="true"
+          aria-label="Unmute sound effects"
         >
           <svg viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true">
             <path d="M11 5 6 9H2v6h4l5 4Z" fill="currentColor" />
@@ -592,11 +601,79 @@
         </button>
       </div>
 
+      <button
+        id="rebirth-toggle"
+        type="button"
+        class="rebirth-button"
+        hidden
+        aria-haspopup="dialog"
+        aria-controls="rebirth-info"
+      >
+        How does rebirth work?
+      </button>
+
       <dialog id="stage-info" aria-labelledby="stage-info-title">
         <button id="stage-info-close" type="button" class="dialog-close" aria-label="Close">&times;</button>
         <h2 id="stage-info-title">Polyp</h2>
-        <div class="reference-photo" aria-hidden="true"><span>Reference photo -- placeholder</span></div>
+        <figure class="reference-photo">
+          <img
+            id="stage-info-photo"
+            src="./assets/stages/polyp.png"
+            alt="AI-generated illustration of an Obelia geniculata polyp colony on the seafloor"
+            width="360"
+            height="360"
+          />
+          <figcaption>
+            <span class="image-credit">AI-generated image</span>
+            <span class="specimen-line">
+              Reference species:
+              <span id="stage-info-specimen" class="specimen-name">Obelia geniculata</span>
+            </span>
+            <span id="stage-info-specimen-note" class="specimen-note"></span>
+          </figcaption>
+        </figure>
+        <p id="stage-info-caption" class="stage-info-caption"></p>
         <p id="stage-info-detail"></p>
+      </dialog>
+
+      <dialog id="rebirth-info" class="rebirth-dialog" aria-labelledby="rebirth-info-title">
+        <button id="rebirth-info-close" type="button" class="dialog-close" aria-label="Close">&times;</button>
+        <h2 id="rebirth-info-title">How rebirth works</h2>
+        <p class="rebirth-lead">
+          After you watched one full cycle, here is what makes
+          <i>Turritopsis dohrnii</i> unusual among jellyfish.
+        </p>
+        <ol class="rebirth-steps">
+          <li>
+            <strong>Stress, not a magic timer.</strong>
+            Starvation, injury, or aging can push a medusa into decline. In most
+            jellyfish species, that decline ends the animal’s life.
+          </li>
+          <li>
+            <strong>The body settles and remakes itself.</strong>
+            Instead of dying, the medusa can sink, retract its tentacles, and
+            form a cyst-like stage on a surface. Over roughly a day or two, that
+            mass reorganises into a polyp — the earlier, anchored body plan.
+          </li>
+          <li>
+            <strong>Cells change job (transdifferentiation).</strong>
+            Medusa tissues and polyp tissues are not the same. Specialised cells
+            are reprogrammed into different specialised cells, so the animal can
+            rebuild a whole new body plan without going back through an egg.
+          </li>
+          <li>
+            <strong>The colony can release medusae again.</strong>
+            Once the polyp is established, it can bud new jellyfish. Genetically
+            it is still the same lineage — a fresh medusa generation grown from
+            the returned polyp stage.
+          </li>
+        </ol>
+        <p class="rebirth-note">
+          Biologists call this <strong>reverse development</strong>. It does not
+          mean the animal never dies — disease, predation, and accident still
+          kill it — but it can escape death by old age in a way almost no other
+          animal can.
+        </p>
       </dialog>
 
       <!-- Shown once, the first time the loop is discovered -- a quiet aside,
@@ -656,15 +733,39 @@
         <button id="bottle-dialog-close" type="button" class="dialog-close" aria-label="Close">&times;</button>
 
         <div class="bottle-content">
-          <h2 id="bottle-dialog-title">循环，走完了一次</h2>
+          <h2 id="bottle-dialog-title">The loop closes — once</h2>
+          <p class="bottle-narration">
+            You have watched a life go all the way to its edge, and then begin again.
+            The ocean does not keep score of how many times a creature starts over;
+            it only receives what you set adrift.
+          </p>
           <blockquote class="bottle-quote">
-            方生方死，方死方生。
-            <cite>——《庄子·齐物论》</cite>
+            That which is born is dying; that which dies is being born.
+            <cite>— Zhuangzi, <i>Equalizing Assessments of Things</i></cite>
           </blockquote>
-          <p class="bottle-hint">写下点什么，交给海浪——不会被保存，也不会被发送到任何地方。</p>
-          <textarea id="bottle-message" rows="2" placeholder="写给这一刻的话……" aria-label="写给海浪的话"></textarea>
+          <blockquote class="bottle-quote">
+            In my end is my beginning.
+            <cite>— T. S. Eliot, <i>Four Quartets</i></cite>
+          </blockquote>
+          <blockquote class="bottle-quote">
+            The sea is everything. It covers seven tenths of the terrestrial globe…
+            It is an immense desert, where man is never lonely, for he feels life stirring on all sides.
+            <cite>— Jules Verne, <i>Twenty Thousand Leagues Under the Seas</i></cite>
+          </blockquote>
+          <p class="bottle-hint">
+            Write a line for this moment and give it to the waves —
+            nothing is stored, and nothing is sent anywhere.
+          </p>
+          <textarea
+            id="bottle-message"
+            rows="3"
+            placeholder="A word for the tide…"
+            aria-label="A message for the waves"
+          ></textarea>
           <div class="bottle-actions">
-            <button id="bottle-throw" type="button" class="primary-button bottle-throw-button">扔出去</button>
+            <button id="bottle-throw" type="button" class="primary-button bottle-throw-button">
+              Cast it away
+            </button>
           </div>
         </div>
 
