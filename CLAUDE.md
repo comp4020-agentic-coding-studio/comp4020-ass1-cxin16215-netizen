@@ -152,6 +152,25 @@ means building legibly is part of building well.
 You don't need a name, a student number, or any identity file in the repo: we
 know whose repo it is. Spend the effort on the work.
 
+## A stylelint pattern that keeps recurring
+
+`no-descending-specificity` has fired on this repo three separate times, and
+it's the same shape every time: a new interactive element's class gets added
+to an existing *combined* selector list (e.g. one shared `:focus-visible`
+outline rule covering several unrelated button classes), while that new
+class's own base rule lives later in the file. Stylelint flags this because
+the later, lower-specificity base rule can never override the earlier,
+higher-specificity pseudo-class rule — reading order implies an override that
+specificity blocks.
+
+The fix that actually sticks: don't share a pseudo-class rule across unrelated
+classes just because the declarations happen to match. Give each class its
+own `X:focus-visible { ... }` rule placed immediately after that class's own
+base rule, even if it duplicates a couple of outline lines. Do this the first
+time a new interactive element is added, not as cleanup after `pnpm check`
+catches it — by the third recurrence, re-prompting for a fix each time was
+clearly the wrong level to fix it at.
+
 ## This file is yours
 
 This CLAUDE.md is a starting point, not a fixed rulebook. As you learn what your
