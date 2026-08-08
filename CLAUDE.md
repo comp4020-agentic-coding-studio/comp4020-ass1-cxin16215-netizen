@@ -89,11 +89,45 @@ running counts as not green, so ship with time for CI to finish.
   blocks any commit containing something shaped like an API key --- by the time
   CI sees a key it's already pushed, so the hook is the sensor that matters.
 
-Nothing here measures **accessibility** or **performance** --- wiring those
-sensors (`axe-core`, Lighthouse, or whatever you choose) is your work, and later
-in the course the spec will ask you to show how you tested both. When you do,
-read a green performance result honestly: it's a lab estimate from one run on a
-CI machine, not proof the site is fast for real users.
+- **accessibility** (`spec/a11y.test.ts`) --- axe-core over the built page,
+  wired up in this repo rather than shipped with the template. Runs the WCAG
+  2.0/2.1 A and AA rule set against the served state plus each dialog's
+  content. See the honesty note below before trusting a green run.
+
+Nothing here measures **performance** --- wiring that sensor (Lighthouse, or
+whatever you choose) is still your work, and later in the course the spec will
+ask you to show how you tested it. When you do, read a green performance result
+honestly: it's a lab estimate from one run on a CI machine, not proof the site
+is fast for real users.
+
+### What the accessibility sensor cannot see
+
+JSDOM has no layout or paint engine, and that shapes what axe can actually
+decide. Two consequences worth knowing before reading a green run as "the page
+is accessible":
+
+- **Colour contrast is switched off, not passing.** Without rendered pixels
+  axe can only guess, and a rule stuck permanently on "incomplete" looks
+  indistinguishable from a rule that passed. Disabling it is the honest
+  option. Contrast, target size, and anything reachable only through real
+  focus or pointer input still need a human at 1920×1080 and 390×844.
+- **Dialog content is audited hoisted out of its `<dialog>`.** A modal
+  `<dialog open>` puts content in the browser's top layer and makes the rest
+  of the page inert; JSDOM can't model that, so axe gives up and marks ~30
+  rules "incomplete" --- which surfaces as **zero violations**. This was
+  verified, not assumed: with the dialogs merely opened, deliberately
+  stripping an `<img alt>` and deliberately unnaming a close button both still
+  reported zero violations. Hoisting the content restores a real audit (21
+  rules evaluated) and catches both. The trade is that native modal behaviour
+  --- focus trapping, Esc, focus restore --- isn't covered; that comes from
+  using a real `<dialog>` and needs a browser to confirm.
+
+The general lesson, which applies past this one sensor: **a check that cannot
+fail is worse than no check**, because it converts an unknown into false
+confidence. When wiring a new sensor, sabotage the thing it watches and prove
+it goes red before trusting it. `spec/a11y.test.ts` keeps a permanent guard of
+this shape --- it asserts a floor on how many rules actually got evaluated, so
+if the audit ever silently stops working the suite goes red instead of green.
 
 ## The stack is swappable
 
