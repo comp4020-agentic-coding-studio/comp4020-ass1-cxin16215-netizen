@@ -3,21 +3,795 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>COMP4020 prototype</title>
+    <title>Turritopsis</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500;1,9..144,600&family=Outfit:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
     <link rel="stylesheet" href="./styles.css" />
   </head>
   <body>
-    <header>
-      <nav aria-label="Primary">
-        <a href="./">Home</a>
-      </nav>
-    </header>
+    <div id="intro-splash" aria-hidden="true">
+      <p data-testid="intro" class="intro-line">If you could start over, would you?</p>
+    </div>
+
+    <div class="particles" aria-hidden="true"></div>
+
+    <!-- ocean-critters: pure background decoration -- common reef animals
+         drifting past, never a second interaction. Kept low-opacity and
+         behind the main scene (z-index) so they read as atmosphere, not
+         competition for the jellyfish. -->
+    <div class="ocean-critters" aria-hidden="true">
+      <svg class="critter fish fish-lone" viewBox="-10 0 60 30" focusable="false">
+        <path d="M8 15 L -8 5 L -8 25 Z" fill="currentColor" />
+        <path
+          d="M8 15 C 8 6 26 2 40 8 C 46 10 50 15 50 15 C 50 15 46 20 40 22 C 26 28 8 24 8 15 Z"
+          fill="currentColor"
+        />
+        <circle cx="39" cy="11" r="1.6" fill="#062028" />
+      </svg>
+      <svg class="critter fish fish-prey" viewBox="-10 0 60 30" focusable="false">
+        <path d="M8 15 L -8 5 L -8 25 Z" fill="currentColor" />
+        <path
+          d="M8 15 C 8 6 26 2 40 8 C 46 10 50 15 50 15 C 50 15 46 20 40 22 C 26 28 8 24 8 15 Z"
+          fill="currentColor"
+        />
+        <circle cx="39" cy="11" r="1.6" fill="#062028" />
+      </svg>
+      <svg class="critter fish fish-predator" viewBox="-10 -10 60 40" focusable="false">
+        <path d="M20 4 L 26 -8 L 32 4 Z" fill="currentColor" />
+        <path d="M8 15 L -8 5 L -8 25 Z" fill="currentColor" />
+        <path
+          d="M8 15 C 8 6 26 2 40 8 C 46 10 50 15 50 15 C 50 15 46 20 40 22 C 26 28 8 24 8 15 Z"
+          fill="currentColor"
+        />
+        <circle cx="39" cy="11" r="1.6" fill="#062028" />
+      </svg>
+      <svg class="critter fish fish-lone-2" viewBox="-10 0 60 30" focusable="false">
+        <path d="M8 15 L -8 5 L -8 25 Z" fill="currentColor" />
+        <path
+          d="M8 15 C 8 6 26 2 40 8 C 46 10 50 15 50 15 C 50 15 46 20 40 22 C 26 28 8 24 8 15 Z"
+          fill="currentColor"
+        />
+        <circle cx="39" cy="11" r="1.6" fill="#062028" />
+      </svg>
+      <svg class="critter starfish" viewBox="-2 -2 44 44" focusable="false">
+        <path
+          d="M20 3 Q24 8 25.88 11.91 Q32 13 36.17 14.75 Q34 20 29.51 23.09 Q32 29 30 33.75 Q24 26 20 30 Q16 26 10 33.75 Q8 29 10.49 23.09 Q6 20 3.83 14.75 Q8 13 14.12 11.91 Q16 8 20 3 Z"
+          fill="currentColor"
+        />
+        <circle cx="20" cy="19" r="3.4" fill="#00000030" />
+        <circle cx="20" cy="8" r="1.1" fill="#00000030" />
+        <circle cx="31" cy="16" r="1.1" fill="#00000030" />
+        <circle cx="27" cy="28" r="1.1" fill="#00000030" />
+        <circle cx="13" cy="28" r="1.1" fill="#00000030" />
+        <circle cx="9" cy="16" r="1.1" fill="#00000030" />
+      </svg>
+      <svg class="critter starfish starfish-2" viewBox="-2 -2 44 44" focusable="false">
+        <path
+          d="M20 3 Q24 8 25.88 11.91 Q32 13 36.17 14.75 Q34 20 29.51 23.09 Q32 29 30 33.75 Q24 26 20 30 Q16 26 10 33.75 Q8 29 10.49 23.09 Q6 20 3.83 14.75 Q8 13 14.12 11.91 Q16 8 20 3 Z"
+          fill="currentColor"
+        />
+        <circle cx="20" cy="19" r="3.4" fill="#00000030" />
+        <circle cx="20" cy="8" r="1.1" fill="#00000030" />
+        <circle cx="31" cy="16" r="1.1" fill="#00000030" />
+        <circle cx="27" cy="28" r="1.1" fill="#00000030" />
+        <circle cx="13" cy="28" r="1.1" fill="#00000030" />
+        <circle cx="9" cy="16" r="1.1" fill="#00000030" />
+      </svg>
+      <svg class="critter crab" viewBox="-24 -12 88 52" focusable="false">
+        <path
+          d="M4 20 Q -2 4 20 2 Q 42 4 36 20 Q 20 30 4 20 Z"
+          fill="currentColor"
+        />
+        <path d="M13 6 L 10 -3" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" />
+        <circle cx="10" cy="-4" r="1.8" fill="currentColor" />
+        <path d="M27 6 L 30 -3" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" />
+        <circle cx="30" cy="-4" r="1.8" fill="currentColor" />
+        <path d="M4 14 Q -8 8 -16 10" stroke="currentColor" stroke-width="2.4" fill="none" stroke-linecap="round" />
+        <path d="M-16 10 L -24 6 M-16 10 L -23 14" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" />
+        <path d="M36 14 Q 48 8 56 10" stroke="currentColor" stroke-width="2.4" fill="none" stroke-linecap="round" />
+        <path d="M56 10 L 64 6 M56 10 L 63 14" stroke="currentColor" stroke-width="2.2" fill="none" stroke-linecap="round" />
+        <path d="M6 24 L 0 28 L -4 35" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" />
+        <path d="M13 27 L 9 32 L 7 39" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" />
+        <path d="M20 28 L 20 33 L 18 40" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" />
+        <path d="M27 27 L 31 32 L 33 39" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" />
+        <path d="M34 24 L 40 28 L 44 35" stroke="currentColor" stroke-width="1.6" fill="none" stroke-linecap="round" />
+      </svg>
+
+      <!-- A comb jelly (ctenophore) -- the one deliberately bright note among
+           otherwise muted, low-opacity critters. Real comb jellies are
+           translucent but their beating cilia "comb rows" split light into a
+           travelling rainbow; the shimmer here is that effect, staggered per
+           row so the colour appears to ripple down the body as it sways past. -->
+      <svg class="critter comb-jelly" viewBox="-6 -6 60 56" focusable="false">
+        <path
+          d="M6 26 Q6 4 28 2 Q50 4 50 26 Q28 38 6 26 Z"
+          fill="#eafcff"
+          fill-opacity="0.32"
+          stroke="#d6f6ff"
+          stroke-opacity="0.55"
+          stroke-width="1.2"
+        />
+        <ellipse cx="20" cy="11" rx="8" ry="5" fill="#ffffff" opacity="0.25" />
+        <path class="comb-row" d="M12 7 Q9 16 12 25" stroke="#ff8fd6" stroke-width="1.6" fill="none" stroke-linecap="round" />
+        <path class="comb-row comb-row-2" d="M19 4.5 Q16 16 19 27.5" stroke="#ffe27a" stroke-width="1.6" fill="none" stroke-linecap="round" />
+        <path class="comb-row comb-row-3" d="M28 3 Q28 16 28 29" stroke="#8fffe0" stroke-width="1.6" fill="none" stroke-linecap="round" />
+        <path class="comb-row comb-row-4" d="M37 4.5 Q40 16 37 27.5" stroke="#9fb8ff" stroke-width="1.6" fill="none" stroke-linecap="round" />
+        <path class="comb-row comb-row-5" d="M44 7 Q47 16 44 25" stroke="#d6a0ff" stroke-width="1.6" fill="none" stroke-linecap="round" />
+        <path d="M14 28 Q10 40 6 48" stroke="#c9f3ff" stroke-width="1" fill="none" opacity="0.5" stroke-linecap="round" />
+        <path d="M22 30 Q20 42 17 50" stroke="#c9f3ff" stroke-width="1" fill="none" opacity="0.5" stroke-linecap="round" />
+        <path d="M34 30 Q36 42 39 50" stroke="#c9f3ff" stroke-width="1" fill="none" opacity="0.5" stroke-linecap="round" />
+        <path d="M42 28 Q46 40 50 48" stroke="#c9f3ff" stroke-width="1" fill="none" opacity="0.5" stroke-linecap="round" />
+      </svg>
+
+      <!-- easter egg: mostly idle offscreen, then a rare fast dash across the
+           screen -- a small school fleeing a trailing shark. -->
+      <svg class="critter fish-school fish-school-1" viewBox="-10 0 60 30" focusable="false">
+        <path d="M8 15 L -8 5 L -8 25 Z" fill="currentColor" />
+        <path
+          d="M8 15 C 8 6 26 2 40 8 C 46 10 50 15 50 15 C 50 15 46 20 40 22 C 26 28 8 24 8 15 Z"
+          fill="currentColor"
+        />
+        <circle cx="39" cy="11" r="1.6" fill="#062028" />
+      </svg>
+      <svg class="critter fish-school fish-school-2" viewBox="-10 0 60 30" focusable="false">
+        <path d="M8 15 L -8 5 L -8 25 Z" fill="currentColor" />
+        <path
+          d="M8 15 C 8 6 26 2 40 8 C 46 10 50 15 50 15 C 50 15 46 20 40 22 C 26 28 8 24 8 15 Z"
+          fill="currentColor"
+        />
+        <circle cx="39" cy="11" r="1.6" fill="#062028" />
+      </svg>
+      <svg class="critter fish-school fish-school-3" viewBox="-10 0 60 30" focusable="false">
+        <path d="M8 15 L -8 5 L -8 25 Z" fill="currentColor" />
+        <path
+          d="M8 15 C 8 6 26 2 40 8 C 46 10 50 15 50 15 C 50 15 46 20 40 22 C 26 28 8 24 8 15 Z"
+          fill="currentColor"
+        />
+        <circle cx="39" cy="11" r="1.6" fill="#062028" />
+        <!-- dizzy-stars: dormant unless main.ts adds .dizzy to this one fish,
+             roughly timed to coincide with an urchin's fall reaching this
+             height -- no real collision, just a loose coincidence sold by a
+             classic "seeing stars" cartoon cue. -->
+        <g class="dizzy-stars" aria-hidden="true">
+          <path d="M0,-2.2 L0.7,-0.7 L2.2,0 L0.7,0.7 L0,2.2 L-0.7,0.7 L-2.2,0 L-0.7,-0.7 Z" fill="#fff6c8" transform="translate(40,2)" />
+          <path d="M0,-2.2 L0.7,-0.7 L2.2,0 L0.7,0.7 L0,2.2 L-0.7,0.7 L-2.2,0 L-0.7,-0.7 Z" fill="#fff6c8" transform="translate(46,0)" />
+          <path d="M0,-2.2 L0.7,-0.7 L2.2,0 L0.7,0.7 L0,2.2 L-0.7,0.7 L-2.2,0 L-0.7,-0.7 Z" fill="#fff6c8" transform="translate(50,3)" />
+        </g>
+      </svg>
+      <svg class="critter fish-school fish-school-4" viewBox="-10 0 60 30" focusable="false">
+        <path d="M8 15 L -8 5 L -8 25 Z" fill="currentColor" />
+        <path
+          d="M8 15 C 8 6 26 2 40 8 C 46 10 50 15 50 15 C 50 15 46 20 40 22 C 26 28 8 24 8 15 Z"
+          fill="currentColor"
+        />
+        <circle cx="39" cy="11" r="1.6" fill="#062028" />
+      </svg>
+      <svg class="critter fish-school fish-school-5" viewBox="-10 0 60 30" focusable="false">
+        <path d="M8 15 L -8 5 L -8 25 Z" fill="currentColor" />
+        <path
+          d="M8 15 C 8 6 26 2 40 8 C 46 10 50 15 50 15 C 50 15 46 20 40 22 C 26 28 8 24 8 15 Z"
+          fill="currentColor"
+        />
+        <circle cx="39" cy="11" r="1.6" fill="#062028" />
+      </svg>
+      <svg class="critter shark" viewBox="-22 -18 100 50" focusable="false">
+        <path d="M4 16 L -20 2 L -6 15 Z" fill="currentColor" />
+        <path d="M4 16 L -14 24 L -5 17 Z" fill="currentColor" />
+        <path
+          d="M4 16 C 14 6 46 2 62 8 C 70 11 76 16 76 16 C 76 16 70 21 62 24 C 46 30 14 26 4 16 Z"
+          fill="currentColor"
+        />
+        <path d="M34 9 L 40 -13 L 48 9 Z" fill="currentColor" />
+        <path d="M20 22 L 12 32 L 26 24 Z" fill="currentColor" />
+        <path d="M58 10 Q 60 16 58 22" stroke="#0a2530" stroke-width="1.2" fill="none" opacity="0.5" />
+        <path d="M62 9 Q 64 16 62 23" stroke="#0a2530" stroke-width="1.2" fill="none" opacity="0.5" />
+        <path d="M66 9 Q 68 16 66 23" stroke="#0a2530" stroke-width="1.2" fill="none" opacity="0.5" />
+        <circle cx="64" cy="12" r="1.6" fill="#062028" />
+      </svg>
+
+      <!-- A separate, independent easter egg from the chase (kept apart on
+           purpose so they never both fire at once): on a quiet transition, a
+           scatter of sea urchins occasionally rains down. No collision
+           detection -- just three staggered falls with one loosely timed to
+           cross fish-school-3's resting height. -->
+      <svg class="critter urchin urchin-1" viewBox="-20 -20 40 40" focusable="false">
+        <circle cx="0" cy="0" r="6" fill="currentColor" />
+        <g stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="6" y1="0" x2="16" y2="0" />
+          <line x1="5.2" y1="3" x2="13.9" y2="8" />
+          <line x1="3" y1="5.2" x2="8" y2="13.9" />
+          <line x1="0" y1="6" x2="0" y2="16" />
+          <line x1="-3" y1="5.2" x2="-8" y2="13.9" />
+          <line x1="-5.2" y1="3" x2="-13.9" y2="8" />
+          <line x1="-6" y1="0" x2="-16" y2="0" />
+          <line x1="-5.2" y1="-3" x2="-13.9" y2="-8" />
+          <line x1="-3" y1="-5.2" x2="-8" y2="-13.9" />
+          <line x1="0" y1="-6" x2="0" y2="-16" />
+          <line x1="3" y1="-5.2" x2="8" y2="-13.9" />
+          <line x1="5.2" y1="-3" x2="13.9" y2="-8" />
+        </g>
+      </svg>
+      <svg class="critter urchin urchin-2" viewBox="-20 -20 40 40" focusable="false">
+        <circle cx="0" cy="0" r="6" fill="currentColor" />
+        <g stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="6" y1="0" x2="16" y2="0" />
+          <line x1="5.2" y1="3" x2="13.9" y2="8" />
+          <line x1="3" y1="5.2" x2="8" y2="13.9" />
+          <line x1="0" y1="6" x2="0" y2="16" />
+          <line x1="-3" y1="5.2" x2="-8" y2="13.9" />
+          <line x1="-5.2" y1="3" x2="-13.9" y2="8" />
+          <line x1="-6" y1="0" x2="-16" y2="0" />
+          <line x1="-5.2" y1="-3" x2="-13.9" y2="-8" />
+          <line x1="-3" y1="-5.2" x2="-8" y2="-13.9" />
+          <line x1="0" y1="-6" x2="0" y2="-16" />
+          <line x1="3" y1="-5.2" x2="8" y2="-13.9" />
+          <line x1="5.2" y1="-3" x2="13.9" y2="-8" />
+        </g>
+      </svg>
+      <svg class="critter urchin urchin-3" viewBox="-20 -20 40 40" focusable="false">
+        <circle cx="0" cy="0" r="6" fill="currentColor" />
+        <g stroke="currentColor" stroke-width="2" stroke-linecap="round">
+          <line x1="6" y1="0" x2="16" y2="0" />
+          <line x1="5.2" y1="3" x2="13.9" y2="8" />
+          <line x1="3" y1="5.2" x2="8" y2="13.9" />
+          <line x1="0" y1="6" x2="0" y2="16" />
+          <line x1="-3" y1="5.2" x2="-8" y2="13.9" />
+          <line x1="-5.2" y1="3" x2="-13.9" y2="8" />
+          <line x1="-6" y1="0" x2="-16" y2="0" />
+          <line x1="-5.2" y1="-3" x2="-13.9" y2="-8" />
+          <line x1="-3" y1="-5.2" x2="-8" y2="-13.9" />
+          <line x1="0" y1="-6" x2="0" y2="-16" />
+          <line x1="3" y1="-5.2" x2="8" y2="-13.9" />
+          <line x1="5.2" y1="-3" x2="13.9" y2="-8" />
+        </g>
+      </svg>
+    </div>
+
+    <nav class="sr-only" aria-label="Primary">
+      <a href="#jelly-scene">Life-cycle stage</a>
+    </nav>
     <main>
-      <h1>COMP4020 prototype</h1>
-      <p data-testid="intro">
-        Replace this with your prototype. This week's brief is on the course website;
-        <code>spec/README.md</code> explains how the checks in this repo relate to it.
+      <h1>The Immortal Jellyfish</h1>
+
+      <svg
+        id="jelly-scene"
+        viewBox="0 0 400 400"
+        role="img"
+        aria-label="An animated jellyfish that ages a step each time you press the button below, from a small anchored polyp through youth and maturity to old age."
+      >
+        <defs>
+          <!-- rimGradient: saturated teal-white, for thin strokes (tentacles, ring) --
+               a line can stay vivid without the whole page reading as a solid
+               cartoon blob the way a large fill area would. -->
+          <radialGradient id="rimGradient" cx="50%" cy="35%" r="65%">
+            <stop offset="0%" stop-color="#eafcff" stop-opacity="0.95" />
+            <stop offset="45%" stop-color="#59e8d0" stop-opacity="0.7" />
+            <stop offset="100%" stop-color="#0b3d55" stop-opacity="0" />
+          </radialGradient>
+          <!-- tissueGradient: the bell itself. Real Turritopsis tissue is almost
+               colourless and translucent -- the mistake last pass made was
+               filling the whole bell at near-full opacity, which reads as a
+               solid glowing dome instead of something you see *through*. -->
+          <radialGradient id="tissueGradient" cx="50%" cy="28%" r="78%">
+            <stop offset="0%" stop-color="#f4feff" stop-opacity="0.5" />
+            <stop offset="55%" stop-color="#bfeee7" stop-opacity="0.22" />
+            <stop offset="100%" stop-color="#8fd9d0" stop-opacity="0.05" />
+          </radialGradient>
+          <!-- stomachGradient: the one saturated colour on the page. This is
+               the actual identifying feature of the species -- the bright red
+               stomach visible through the transparent bell. -->
+          <radialGradient id="stomachGradient" cx="50%" cy="40%" r="60%">
+            <stop offset="0%" stop-color="#ff8a5c" stop-opacity="0.95" />
+            <stop offset="55%" stop-color="#ff5636" stop-opacity="0.8" />
+            <stop offset="100%" stop-color="#c7391f" stop-opacity="0" />
+          </radialGradient>
+          <radialGradient id="senescentOrganGradient" cx="50%" cy="40%" r="60%">
+            <stop offset="0%" stop-color="#c98b64" stop-opacity="0.6" />
+            <stop offset="60%" stop-color="#8a5a42" stop-opacity="0.4" />
+            <stop offset="100%" stop-color="#4a3527" stop-opacity="0" />
+          </radialGradient>
+          <!-- tentacleFade / canalFade: fade each line from bright at its root
+               to transparent at its tip, so light seems to catch each one
+               individually rather than everything sharing one flat stroke. -->
+          <linearGradient id="tentacleFade" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#dffcf7" stop-opacity="0.9" />
+            <stop offset="100%" stop-color="#dffcf7" stop-opacity="0" />
+          </linearGradient>
+          <linearGradient id="canalFade" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0%" stop-color="#ffb199" stop-opacity="0.85" />
+            <stop offset="100%" stop-color="#ffb199" stop-opacity="0" />
+          </linearGradient>
+          <!-- ambientGlow: a soft wash behind the whole scene, like a shaft of
+               surface light -- depth cue, not a shape anyone reads directly.
+               Kept very faint so it never reads as a lit "card" behind the animal. -->
+          <radialGradient id="ambientGlow" cx="50%" cy="12%" r="70%">
+            <stop offset="0%" stop-color="#eafcff" stop-opacity="0.08" />
+            <stop offset="55%" stop-color="#59e8d0" stop-opacity="0.03" />
+            <stop offset="100%" stop-color="#0b3d55" stop-opacity="0" />
+          </radialGradient>
+          <filter id="glow" x="-40%" y="-40%" width="180%" height="180%">
+            <feGaussianBlur id="glowBlur" in="SourceGraphic" stdDeviation="1.5" result="blur" />
+            <feColorMatrix
+              in="blur"
+              type="matrix"
+              values="1.15 0 0 0 0  0 1.15 0 0 0  0 0 1.15 0 0  0 0 0 0.7 0"
+              result="bloom"
+            />
+            <feMerge>
+              <feMergeNode in="bloom" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+          <!-- ouroborosGlow: its own two-layer bloom (wide soft halo + a
+               brighter tight core), independent of #glow's stdDeviation --
+               that one is driven live by the jellyfish's own per-stage blur,
+               so the ring needs a fixed, stronger light of its own to read
+               as life force welling up rather than the body's ambient glow. -->
+          <filter id="ouroborosGlow" x="-100%" y="-200%" width="300%" height="500%">
+            <feGaussianBlur in="SourceGraphic" stdDeviation="16" result="haloBlur" />
+            <feColorMatrix
+              in="haloBlur"
+              type="matrix"
+              values="1.2 0 0 0 0  0 1.2 0 0 0  0 0 1.2 0 0  0 0 0 0.85 0"
+              result="halo"
+            />
+            <feGaussianBlur in="SourceGraphic" stdDeviation="4" result="coreBlur" />
+            <feColorMatrix
+              in="coreBlur"
+              type="matrix"
+              values="1.7 0 0 0 0  0 1.7 0 0 0  0 0 1.7 0 0  0 0 0 1 0"
+              result="core"
+            />
+            <feMerge>
+              <feMergeNode in="halo" />
+              <feMergeNode in="core" />
+              <feMergeNode in="SourceGraphic" />
+            </feMerge>
+          </filter>
+          <!-- softHighlight: a blurred patch of light, screen-blended onto the
+               bell rather than alpha-composited -- "screen" only ever brightens,
+               so the translucent tissue and organs underneath stay visible
+               instead of being washed out the way a flat opacity overlay would. -->
+          <filter id="softHighlight" x="-120%" y="-120%" width="340%" height="340%">
+            <feGaussianBlur stdDeviation="7" />
+          </filter>
+          <filter id="organic" x="-60%" y="-60%" width="220%" height="220%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.015 0.05" numOctaves="2" seed="7" result="noise" />
+            <feDisplacementMap
+              id="organicDisplace"
+              in="SourceGraphic"
+              in2="noise"
+              scale="2"
+              xChannelSelector="R"
+              yChannelSelector="G"
+            />
+          </filter>
+          <filter id="ripple" x="-100%" y="-100%" width="300%" height="300%">
+            <feTurbulence type="fractalNoise" baseFrequency="0.008 0.03" numOctaves="2" seed="3" result="rippleNoise" />
+            <feDisplacementMap in="SourceGraphic" in2="rippleNoise" xChannelSelector="R" yChannelSelector="G" scale="0">
+              <animate
+                id="rippleAnim"
+                attributeName="scale"
+                values="0;55;0"
+                keyTimes="0;0.4;1"
+                dur="420ms"
+                begin="indefinite"
+                fill="remove"
+              />
+            </feDisplacementMap>
+          </filter>
+        </defs>
+
+        <!-- ambient light shaft: depth cue behind everything -->
+        <ellipse cx="200" cy="0" rx="220" ry="280" fill="url(#ambientGlow)" opacity="0.55" />
+
+        <!-- ouroboros: dormant infinity symbol, drawn only around a loop-reset --
+             a lemniscate (two joined loops) rather than the plain ring this
+             replaced, so the loop-reset motif reads literally as "infinity"
+             instead of just "a circle". Own green stroke, not the shared
+             rimGradient the tentacles use, so it reads as a distinct signal. -->
+        <path
+          id="ouroboros-ring"
+          d="M 200 200 C 268.07 249.74 330 249.74 330 200 C 330 150.26 268.07 150.26 200 200
+             C 131.93 249.74 70 249.74 70 200 C 70 150.26 131.93 150.26 200 200 Z"
+          fill="none"
+          stroke="#57e389"
+          stroke-width="5"
+          stroke-linecap="round"
+          stroke-dasharray="850"
+          stroke-dashoffset="850"
+          opacity="0"
+        />
+
+        <!-- polyp: anchored stalk with a short tentacle crown. Framed via
+             stage-art so it sits in the optical centre of the scene instead of
+             stranded at the bottom of the 400 viewBox. -->
+        <g class="stage" data-stage="polyp">
+          <g class="stage-art" transform="translate(200 250) scale(1.55) translate(-200 -295)">
+            <ellipse cx="200" cy="330" rx="26" ry="8" fill="url(#tissueGradient)" opacity="0.6" />
+            <path d="M 190 260 Q 186 300 192 328 L 208 328 Q 214 300 210 260 Z" fill="url(#tissueGradient)" />
+            <ellipse cx="222" cy="322" rx="9" ry="5" fill="url(#tissueGradient)" opacity="0.7" />
+            <g class="tentacles" filter="url(#organic)">
+              <path d="M 190 262 Q 180 250 172 250" fill="none" stroke="url(#tentacleFade)" stroke-width="3" stroke-linecap="round" />
+              <path d="M 194 259 Q 187 244 180 240" fill="none" stroke="url(#tentacleFade)" stroke-width="3" stroke-linecap="round" />
+              <path d="M 198 257 Q 195 240 192 234" fill="none" stroke="url(#tentacleFade)" stroke-width="3" stroke-linecap="round" />
+              <path d="M 202 257 Q 205 240 208 234" fill="none" stroke="url(#tentacleFade)" stroke-width="3" stroke-linecap="round" />
+              <path d="M 206 259 Q 213 244 220 240" fill="none" stroke="url(#tentacleFade)" stroke-width="3" stroke-linecap="round" />
+              <path d="M 210 262 Q 220 250 228 250" fill="none" stroke="url(#tentacleFade)" stroke-width="3" stroke-linecap="round" />
+            </g>
+          </g>
+        </g>
+
+        <!-- young medusa: small near-transparent bell, a faint stomach just
+             starting to show colour, four radial canals, sparse fine tentacles -->
+        <g class="stage" data-stage="young">
+          <g class="body">
+            <ellipse cx="200" cy="155" rx="15" ry="11" fill="url(#stomachGradient)" opacity="0.5" />
+            <path d="M 200 158 L 172 192" fill="none" stroke="url(#canalFade)" stroke-width="2" opacity="0.6" />
+            <path d="M 200 158 L 195 204" fill="none" stroke="url(#canalFade)" stroke-width="2" opacity="0.6" />
+            <path d="M 200 158 L 216 202" fill="none" stroke="url(#canalFade)" stroke-width="2" opacity="0.6" />
+            <path d="M 200 158 L 228 192" fill="none" stroke="url(#canalFade)" stroke-width="2" opacity="0.6" />
+            <path
+              d="M 160 190 Q 160 130 200 128 Q 240 130 240 190 Q 200 210 160 190 Z"
+              fill="url(#tissueGradient)"
+              stroke="url(#rimGradient)"
+              stroke-width="1"
+              opacity="0.9"
+            />
+            <ellipse
+              cx="187"
+              cy="143"
+              rx="12"
+              ry="7"
+              fill="#eafcff"
+              opacity="0.45"
+              filter="url(#softHighlight)"
+              style="mix-blend-mode: screen"
+            />
+          </g>
+          <g class="tentacles" filter="url(#organic)">
+            <path d="M 175 195 Q 170 250 165 290" fill="none" stroke="url(#tentacleFade)" stroke-width="2.5" stroke-linecap="round" />
+            <path d="M 182 199 Q 178 255 174 296" fill="none" stroke="url(#tentacleFade)" stroke-width="2" stroke-linecap="round" />
+            <path d="M 190 202 Q 187 260 182 300" fill="none" stroke="url(#tentacleFade)" stroke-width="2.5" stroke-linecap="round" />
+            <path d="M 200 204 Q 199 262 197 302" fill="none" stroke="url(#tentacleFade)" stroke-width="2" stroke-linecap="round" />
+            <path d="M 210 202 Q 213 260 218 300" fill="none" stroke="url(#tentacleFade)" stroke-width="2.5" stroke-linecap="round" />
+            <path d="M 218 199 Q 222 255 226 296" fill="none" stroke="url(#tentacleFade)" stroke-width="2" stroke-linecap="round" />
+            <path d="M 225 195 Q 230 250 235 290" fill="none" stroke="url(#tentacleFade)" stroke-width="2.5" stroke-linecap="round" />
+          </g>
+        </g>
+
+        <!-- mature medusa: full transparent bell, vivid red stomach + canals
+             visible through the tissue, oral arms, dense fine tentacles
+             (real Turritopsis carries up to ~90; density here implies that
+             without literally drawing ninety illegible hairlines) -->
+        <g class="stage" data-stage="mature">
+          <g class="body">
+            <ellipse cx="200" cy="148" rx="24" ry="17" fill="url(#stomachGradient)" />
+            <ellipse cx="170" cy="175" rx="5" ry="3.5" fill="url(#stomachGradient)" opacity="0.7" />
+            <ellipse cx="230" cy="175" rx="5" ry="3.5" fill="url(#stomachGradient)" opacity="0.7" />
+            <path d="M 200 155 L 150 205" fill="none" stroke="url(#canalFade)" stroke-width="2.5" opacity="0.75" />
+            <path d="M 200 155 L 185 226" fill="none" stroke="url(#canalFade)" stroke-width="2.5" opacity="0.75" />
+            <path d="M 200 155 L 215 226" fill="none" stroke="url(#canalFade)" stroke-width="2.5" opacity="0.75" />
+            <path d="M 200 155 L 250 205" fill="none" stroke="url(#canalFade)" stroke-width="2.5" opacity="0.75" />
+            <path
+              d="M 130 200 Q 128 110 200 105 Q 272 110 270 200 Q 200 232 130 200 Z"
+              fill="url(#tissueGradient)"
+              stroke="url(#rimGradient)"
+              stroke-width="1.2"
+              opacity="0.92"
+            />
+            <ellipse
+              cx="178"
+              cy="128"
+              rx="18"
+              ry="10"
+              fill="#eafcff"
+              opacity="0.5"
+              filter="url(#softHighlight)"
+              style="mix-blend-mode: screen"
+            />
+          </g>
+          <g class="oral-arms" filter="url(#organic)">
+            <path d="M 185 210 Q 180 250 190 280" fill="none" stroke="url(#rimGradient)" stroke-width="5" stroke-linecap="round" opacity="0.7" />
+            <path d="M 200 214 Q 200 255 200 290" fill="none" stroke="url(#rimGradient)" stroke-width="5" stroke-linecap="round" opacity="0.7" />
+            <path d="M 215 210 Q 220 250 210 280" fill="none" stroke="url(#rimGradient)" stroke-width="5" stroke-linecap="round" opacity="0.7" />
+          </g>
+          <g class="tentacles" filter="url(#organic)">
+            <path d="M 138 202 Q 128 268 118 328" fill="none" stroke="url(#tentacleFade)" stroke-width="2" stroke-linecap="round" />
+            <path d="M 145 205 Q 135 270 125 330" fill="none" stroke="url(#tentacleFade)" stroke-width="2.5" stroke-linecap="round" />
+            <path d="M 153 210 Q 145 275 137 333" fill="none" stroke="url(#tentacleFade)" stroke-width="2" stroke-linecap="round" />
+            <path d="M 160 215 Q 153 280 145 335" fill="none" stroke="url(#tentacleFade)" stroke-width="2.5" stroke-linecap="round" />
+            <path d="M 168 219 Q 162 282 155 338" fill="none" stroke="url(#tentacleFade)" stroke-width="2" stroke-linecap="round" />
+            <path d="M 175 222 Q 170 285 165 340" fill="none" stroke="url(#tentacleFade)" stroke-width="2.5" stroke-linecap="round" />
+            <path d="M 225 222 Q 230 285 235 340" fill="none" stroke="url(#tentacleFade)" stroke-width="2.5" stroke-linecap="round" />
+            <path d="M 232 219 Q 238 282 245 338" fill="none" stroke="url(#tentacleFade)" stroke-width="2" stroke-linecap="round" />
+            <path d="M 240 215 Q 247 280 255 335" fill="none" stroke="url(#tentacleFade)" stroke-width="2.5" stroke-linecap="round" />
+            <path d="M 247 210 Q 255 275 263 333" fill="none" stroke="url(#tentacleFade)" stroke-width="2" stroke-linecap="round" />
+            <path d="M 255 205 Q 265 270 275 330" fill="none" stroke="url(#tentacleFade)" stroke-width="2.5" stroke-linecap="round" />
+            <path d="M 262 202 Q 272 268 282 328" fill="none" stroke="url(#tentacleFade)" stroke-width="2" stroke-linecap="round" />
+          </g>
+        </g>
+
+        <!-- senescent: shrunken, asymmetric, drooping -- the stomach dulls
+             from vivid red to a tired brown, canals go uneven, tentacles
+             thin out. Tissue itself stays translucent, just dimmer. -->
+        <g class="stage" data-stage="senescent">
+          <g class="body">
+            <ellipse cx="193" cy="172" rx="16" ry="11" fill="url(#senescentOrganGradient)" />
+            <path d="M 193 178 L 168 208" fill="none" stroke="url(#canalFade)" stroke-width="2" opacity="0.4" />
+            <path d="M 193 178 L 190 220" fill="none" stroke="url(#canalFade)" stroke-width="1.5" opacity="0.3" />
+            <path d="M 193 178 L 222 210" fill="none" stroke="url(#canalFade)" stroke-width="2" opacity="0.45" />
+            <path
+              d="M 150 210 Q 152 150 198 140 Q 250 148 245 205 Q 195 225 150 210 Z"
+              fill="url(#tissueGradient)"
+              stroke="url(#rimGradient)"
+              stroke-width="1"
+              opacity="0.75"
+            />
+            <ellipse
+              cx="178"
+              cy="158"
+              rx="12"
+              ry="7"
+              fill="#eafcff"
+              opacity="0.22"
+              filter="url(#softHighlight)"
+              style="mix-blend-mode: screen"
+            />
+          </g>
+          <g class="tentacles" filter="url(#organic)">
+            <path d="M 165 212 Q 158 245 168 270" fill="none" stroke="url(#tentacleFade)" stroke-width="2.5" stroke-linecap="round" opacity="0.75" />
+            <path d="M 190 218 Q 186 250 195 275" fill="none" stroke="url(#tentacleFade)" stroke-width="2" stroke-linecap="round" opacity="0.55" />
+            <path d="M 222 216 Q 228 248 220 272" fill="none" stroke="url(#tentacleFade)" stroke-width="2" stroke-linecap="round" opacity="0.55" />
+          </g>
+        </g>
+      </svg>
+
+      <p id="current-stage-label" class="current-stage-label" aria-live="polite">Polyp</p>
+      <p id="stage-caption" class="stage-caption" aria-live="polite">
+        Anchored to the seafloor, a colony of polyps buds slowly, waiting.
       </p>
+
+      <div class="controls">
+        <button id="next-stage" type="button" class="primary-button">
+          <span id="next-stage-label">Let time pass</span>
+          <span class="button-burst" aria-hidden="true">
+            <span class="spark"></span>
+            <span class="spark"></span>
+            <span class="spark"></span>
+            <span class="spark"></span>
+            <span class="spark"></span>
+            <span class="spark"></span>
+            <span class="spark"></span>
+            <span class="spark"></span>
+          </span>
+        </button>
+        <button
+          id="info-toggle"
+          type="button"
+          class="info-button"
+          aria-haspopup="dialog"
+          aria-controls="stage-info"
+          aria-label="More about this stage"
+        >
+          &#9432;
+        </button>
+        <button
+          id="sound-toggle"
+          type="button"
+          class="info-button sound-button"
+          aria-pressed="true"
+          aria-label="Unmute sound effects"
+        >
+          <svg viewBox="0 0 24 24" width="20" height="20" focusable="false" aria-hidden="true">
+            <path d="M11 5 6 9H2v6h4l5 4Z" fill="currentColor" />
+            <g class="sound-waves" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+              <path d="M15.5 8.5a5 5 0 0 1 0 7" />
+              <path d="M18.5 5.5a9 9 0 0 1 0 13" />
+            </g>
+            <g class="mute-x" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+              <path d="M15.5 9 21.5 15" />
+              <path d="M21.5 9 15.5 15" />
+            </g>
+          </svg>
+        </button>
+      </div>
+
+      <button
+        id="rebirth-toggle"
+        type="button"
+        class="rebirth-button"
+        hidden
+        aria-haspopup="dialog"
+        aria-controls="rebirth-info"
+      >
+        How does rebirth work?
+      </button>
+
+      <dialog id="stage-info" aria-labelledby="stage-info-title">
+        <button id="stage-info-close" type="button" class="dialog-close" aria-label="Close">&times;</button>
+        <h2 id="stage-info-title">Polyp</h2>
+        <figure class="reference-photo">
+          <img
+            id="stage-info-photo"
+            src="./assets/stages/polyp.png"
+            alt="AI-generated illustration of an Obelia geniculata polyp colony on the seafloor"
+            width="360"
+            height="360"
+          />
+          <figcaption>
+            <span class="image-credit">AI-generated image</span>
+            <span class="specimen-line">
+              Reference species:
+              <span id="stage-info-specimen" class="specimen-name">Obelia geniculata</span>
+            </span>
+            <span id="stage-info-specimen-note" class="specimen-note"></span>
+          </figcaption>
+        </figure>
+        <p id="stage-info-caption" class="stage-info-caption"></p>
+        <p id="stage-info-detail"></p>
+      </dialog>
+
+      <dialog id="rebirth-info" class="rebirth-dialog" aria-labelledby="rebirth-info-title">
+        <button id="rebirth-info-close" type="button" class="dialog-close" aria-label="Close">&times;</button>
+        <h2 id="rebirth-info-title">How rebirth works</h2>
+        <p class="rebirth-lead">
+          After you watched one full cycle, here is what makes
+          <i>Turritopsis dohrnii</i> unusual among jellyfish.
+        </p>
+        <ol class="rebirth-steps">
+          <li>
+            <strong>Stress, not a magic timer.</strong>
+            Starvation, injury, or aging can push a medusa into decline. In most
+            jellyfish species, that decline ends the animal’s life.
+          </li>
+          <li>
+            <strong>The body settles and remakes itself.</strong>
+            Instead of dying, the medusa can sink, retract its tentacles, and
+            form a cyst-like stage on a surface. Over roughly a day or two, that
+            mass reorganises into a polyp — the earlier, anchored body plan.
+          </li>
+          <li>
+            <strong>Cells change job (transdifferentiation).</strong>
+            Medusa tissues and polyp tissues are not the same. Specialised cells
+            are reprogrammed into different specialised cells, so the animal can
+            rebuild a whole new body plan without going back through an egg.
+          </li>
+          <li>
+            <strong>The colony can release medusae again.</strong>
+            Once the polyp is established, it can bud new jellyfish. Genetically
+            it is still the same lineage — a fresh medusa generation grown from
+            the returned polyp stage.
+          </li>
+        </ol>
+        <p class="rebirth-note">
+          Biologists call this <strong>reverse development</strong>. It does not
+          mean the animal never dies — disease, predation, and accident still
+          kill it — but it can escape death by old age in a way almost no other
+          animal can.
+        </p>
+      </dialog>
+
+      <!-- Shown once, the first time the loop is discovered -- a quiet aside,
+           not another mechanic. Deliberately a sunlit beach, not the deep-sea
+           bioluminescent palette used everywhere else: this moment is a
+           breath of open air and daylight before the loop continues. Nothing
+           typed here is stored or sent anywhere; the drift is the point. -->
+      <dialog id="bottle-dialog" class="bottle-dialog" aria-labelledby="bottle-dialog-title">
+        <svg class="bottle-scene" viewBox="0 0 400 260" preserveAspectRatio="xMidYMid slice" aria-hidden="true" focusable="false">
+          <defs>
+            <linearGradient id="bottleSky" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#bdeeff" />
+              <stop offset="55%" stop-color="#ffe3ad" />
+              <stop offset="100%" stop-color="#ffcf8a" />
+            </linearGradient>
+            <radialGradient id="bottleSun" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#fffaea" />
+              <stop offset="55%" stop-color="#ffe27a" stop-opacity="0.85" />
+              <stop offset="100%" stop-color="#ffe27a" stop-opacity="0" />
+            </radialGradient>
+            <linearGradient id="bottleSea" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0%" stop-color="#63d3d6" />
+              <stop offset="100%" stop-color="#1f8fa8" />
+            </linearGradient>
+          </defs>
+          <rect width="400" height="260" fill="url(#bottleSky)" />
+          <circle cx="300" cy="66" r="72" fill="url(#bottleSun)" />
+          <circle cx="300" cy="66" r="24" fill="#fff6d8" />
+          <path d="M40 172 Q 90 146 150 172 Q 108 180 40 172 Z" fill="#2f7f63" />
+          <path d="M78 172 L 83 138 L 89 172 Z" fill="#3a5a3f" />
+          <path
+            d="M83 138 Q 68 144 62 156 M83 138 Q 99 142 106 156"
+            stroke="#3a5a3f"
+            stroke-width="3"
+            fill="none"
+            stroke-linecap="round"
+          />
+          <path d="M0 176 Q 100 162 200 178 T 400 172 V 260 H 0 Z" fill="url(#bottleSea)" />
+          <path
+            class="bottle-wave"
+            d="M0 188 Q 100 176 200 190 T 400 184"
+            stroke="#eafcff"
+            stroke-width="2"
+            fill="none"
+            opacity="0.55"
+          />
+          <path
+            class="bottle-wave bottle-wave-2"
+            d="M0 206 Q 100 196 200 208 T 400 202"
+            stroke="#eafcff"
+            stroke-width="2"
+            fill="none"
+            opacity="0.35"
+          />
+        </svg>
+
+        <button id="bottle-dialog-close" type="button" class="dialog-close" aria-label="Close">&times;</button>
+
+        <div class="bottle-content">
+          <h2 id="bottle-dialog-title">The loop closes — once</h2>
+          <p class="bottle-narration">
+            You have watched a life go all the way to its edge, and then begin again.
+            The ocean does not keep score of how many times a creature starts over;
+            it only receives what you set adrift.
+          </p>
+          <blockquote class="bottle-quote">
+            That which is born is dying; that which dies is being born.
+            <cite>— Zhuangzi, <i>Equalizing Assessments of Things</i></cite>
+          </blockquote>
+          <blockquote class="bottle-quote">
+            In my end is my beginning.
+            <cite>— T. S. Eliot, <i>Four Quartets</i></cite>
+          </blockquote>
+          <blockquote class="bottle-quote">
+            The sea is everything. It covers seven tenths of the terrestrial globe…
+            It is an immense desert, where man is never lonely, for he feels life stirring on all sides.
+            <cite>— Jules Verne, <i>Twenty Thousand Leagues Under the Seas</i></cite>
+          </blockquote>
+          <p class="bottle-hint">
+            Write a line for this moment and give it to the waves —
+            nothing is stored, and nothing is sent anywhere.
+          </p>
+          <textarea
+            id="bottle-message"
+            rows="3"
+            placeholder="A word for the tide…"
+            aria-label="A message for the waves"
+          ></textarea>
+          <div class="bottle-actions">
+            <button id="bottle-throw" type="button" class="primary-button bottle-throw-button">
+              Cast it away
+            </button>
+          </div>
+        </div>
+
+        <svg class="bottle-icon" viewBox="0 0 24 40" width="26" aria-hidden="true" focusable="false">
+          <rect x="9" y="1" width="6" height="3" rx="1" fill="#5fc9b8" />
+          <path
+            d="M9 4h6v5l3 4v23a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V13l3-4Z"
+            fill="#7fe7d6"
+            opacity="0.9"
+            stroke="#0d2b3a"
+            stroke-width="0.6"
+          />
+          <path d="M8 17h8" stroke="#0d2b3a" stroke-width="0.6" opacity="0.4" />
+        </svg>
+
+        <!-- A one-shot splash where the bottle first meets the water --
+             expanding rings plus a few flung droplets, timed to the start of
+             the drift so the throw reads as an impact, not a fade-in. -->
+        <div class="bottle-splash" aria-hidden="true">
+          <span class="splash-ring"></span>
+          <span class="splash-ring splash-ring-2"></span>
+          <span class="splash-drop"></span>
+          <span class="splash-drop splash-drop-2"></span>
+          <span class="splash-drop splash-drop-3"></span>
+        </div>
+      </dialog>
     </main>
     <script type="module" src="./main.ts"></script>
   </body>

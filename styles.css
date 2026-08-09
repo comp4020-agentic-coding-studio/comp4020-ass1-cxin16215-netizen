@@ -1,16 +1,1599 @@
+:root {
+  color-scheme: dark;
+
+  --font-display: "Fraunces", "Palatino Linotype", palatino, serif;
+  --font-body: "Outfit", "Segoe UI", sans-serif;
+}
+
 body {
   margin: 0;
-  padding: 2rem;
-  font-family: system-ui, sans-serif;
+  padding: 0;
+  font-family: var(--font-body);
   line-height: 1.6;
-  color: #1a1a1a;
+  color: #dff6f4;
+  background: radial-gradient(ellipse at 50% 15%, #0d2b3a 0%, #061a26 45%, #030d14 75%, #010306 100%);
+  min-height: 100dvh;
+  overflow-x: hidden;
+}
+
+/* Landmark kept for invariants / assistive tech; not part of the composition. */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
 }
 
 main {
-  max-width: 40rem;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  box-sizing: border-box;
+  width: min(100%, 48rem);
+  min-height: 100dvh;
   margin: 0 auto;
+  padding: 1.25rem 1rem 1.75rem;
+  text-align: center;
 }
 
 a {
-  color: #0b5fff;
+  color: #7fe7d6;
+}
+
+h1 {
+  font-family: var(--font-display);
+  font-size: clamp(1.55rem, 3.2vw, 2.05rem);
+  font-weight: 550;
+  font-optical-sizing: auto;
+  letter-spacing: 0.01em;
+  margin: 0 0 0.35rem;
+}
+
+/* --- intro splash: the one framing line, then it fades into the scene --- */
+
+#intro-splash {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  background: radial-gradient(ellipse at 50% 40%, #0d2b3a 0%, #061a26 55%, #030d14 100%);
+  animation: intro-fade 4s ease forwards;
+}
+
+.intro-line {
+  max-width: 28rem;
+  font-family: var(--font-display);
+  font-size: clamp(1.35rem, 3.5vw, 1.75rem);
+  font-weight: 500;
+  font-style: italic;
+  font-optical-sizing: auto;
+  line-height: 1.45;
+  color: #cdeeea;
+  text-align: center;
+}
+
+@keyframes intro-fade {
+  0%,
+  50% {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  90% {
+    opacity: 0;
+    visibility: visible;
+  }
+
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+/* --- ambient deep-sea particles --- */
+
+.particles {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.particle {
+  position: absolute;
+  left: var(--x);
+  bottom: -10px;
+  width: var(--size);
+  height: var(--size);
+  border-radius: 50%;
+  background: #7fe7d6;
+  box-shadow: 0 0 6px 1px rgb(127 231 214 / 80%);
+  opacity: 0;
+  animation: particle-drift var(--duration) linear var(--delay) infinite;
+}
+
+@keyframes particle-drift {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0);
+  }
+
+  10% {
+    opacity: 0.8;
+  }
+
+  50% {
+    opacity: 0.35;
+  }
+
+  90% {
+    opacity: 0.8;
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(var(--drift), -110vh);
+  }
+}
+
+/* --- ambient background wildlife: pure decoration, never a second
+   interaction -- kept low-opacity and behind the main scene (z-index 0,
+   same stacking layer as .particles) so it reads as atmosphere the visitor
+   half-notices, not something competing with the jellyfish for attention.
+   One pair (fish-prey / fish-predator) shares a single animation-duration
+   so their timelines line up: the prey's keyframes dart up and away right
+   when the predator's keyframes would otherwise have closed the gap. --- */
+
+.ocean-critters {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.critter {
+  position: absolute;
+  width: 3.5rem;
+  filter: blur(0.3px);
+}
+
+.fish-lone {
+  top: 12%;
+  right: -14%;
+  color: #7fe7d6;
+  opacity: 0.28;
+  scale: -1 1;
+  animation: swim-lone 34s linear infinite;
+}
+
+.fish-prey {
+  top: 55%;
+  left: -12%;
+  width: 2.6rem;
+  color: #eafcff;
+  opacity: 0.3;
+  animation: swim-prey 24s linear infinite;
+}
+
+.fish-predator {
+  top: 55%;
+  left: -20%;
+  width: 4.8rem;
+  color: #1f5c56;
+  opacity: 0.32;
+  animation: swim-predator 24s linear infinite;
+}
+
+.fish-lone-2 {
+  top: 24%;
+  left: -12%;
+  color: #59c9ff;
+  opacity: 0.26;
+  animation: swim-lone-2 40s linear infinite;
+}
+
+.starfish {
+  bottom: -10%;
+  left: 15%;
+  width: 2.4rem;
+  color: #d97a4a;
+  opacity: 0.24;
+  animation: drift-starfish 50s linear infinite;
+}
+
+.starfish-2 {
+  bottom: -14%;
+  left: 68%;
+  width: 2rem;
+  color: #e0b24a;
+  opacity: 0.2;
+  animation: drift-starfish-2 58s linear infinite;
+}
+
+.crab {
+  bottom: 6%;
+  left: 40%;
+  width: 3.2rem;
+  color: #8a5a42;
+  opacity: 0.26;
+  animation: scuttle-crab 13s ease-in-out infinite alternate;
+}
+
+/* The one bright note in the background layer -- everything else here sits
+   at low opacity in a single muted hue, but a comb jelly's whole appeal is
+   the rainbow shimmer, so it's allowed to actually pop. */
+.comb-jelly {
+  top: 68%;
+  left: -14%;
+  width: 4.2rem;
+  opacity: 0.85;
+  animation: drift-comb-jelly 46s ease-in-out infinite;
+  animation-delay: -18s;
+}
+
+.comb-row {
+  opacity: 0.5;
+  animation: comb-shimmer 1.8s ease-in-out infinite;
+}
+
+.comb-row-2 {
+  animation-delay: 0.15s;
+}
+
+.comb-row-3 {
+  animation-delay: 0.3s;
+}
+
+.comb-row-4 {
+  animation-delay: 0.45s;
+}
+
+.comb-row-5 {
+  animation-delay: 0.6s;
+}
+
+/* easter egg: parked offscreen almost the whole cycle, then a fast dash --
+   the school flees a beat before the shark's own dash window catches up. */
+
+.fish-school {
+  left: -14%;
+  width: 1.7rem;
+  color: #d6fbf5;
+  opacity: 0.34;
+  animation-name: school-dash;
+  animation-duration: 90s;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+.fish-school-1 {
+  top: 36%;
+  animation-delay: -0.4s;
+}
+
+.fish-school-2 {
+  top: 43%;
+  animation-delay: -0.1s;
+}
+
+.fish-school-3 {
+  top: 49%;
+  animation-delay: -0.7s;
+}
+
+.fish-school-4 {
+  top: 40%;
+  animation-delay: -0.2s;
+}
+
+.fish-school-5 {
+  top: 53%;
+  animation-delay: -0.5s;
+}
+
+.shark {
+  top: 42%;
+  left: -20%;
+  width: 5.6rem;
+  color: #274b52;
+  opacity: 0.34;
+  animation: shark-chase 90s linear infinite;
+}
+
+/* fired on demand from main.ts (reaching the senescent stage), overriding
+   the ambient infinite loop with a single guaranteed dash */
+
+.fish-school.chase-active {
+  animation: school-dash-trigger 4s linear forwards;
+}
+
+/* the shorthand above resets animation-delay to 0 for every fish, which
+   collapses the school into a rigid column -- restore a loose, staggered
+   stampede with per-fish positive delays instead of the ambient loop's
+   negative (already-in-progress) ones. */
+.fish-school-1.chase-active { animation-delay: 0s; }
+.fish-school-2.chase-active { animation-delay: 0.2s; }
+.fish-school-3.chase-active { animation-delay: 0.45s; }
+.fish-school-4.chase-active { animation-delay: 0.1s; }
+.fish-school-5.chase-active { animation-delay: 0.3s; }
+
+.shark.chase-active {
+  animation: shark-chase-trigger 4.6s linear 0.4s forwards;
+}
+
+/* easter egg within an easter egg: dormant until main.ts opts in for this
+   run of the chase -- see triggerUrchinRain(). No ambient loop, since a
+   constant background hail of urchins would compete with the chase itself. */
+.urchin {
+  top: -12%;
+  width: 1.4rem;
+  color: #3a2454;
+  opacity: 0;
+}
+
+.urchin-1 {
+  left: 22%;
+}
+
+.urchin-2 {
+  left: 55%;
+}
+
+.urchin-3 {
+  left: 78%;
+}
+
+.urchin.urchin-active {
+  animation: urchin-fall 2.4s ease-in forwards;
+}
+
+.urchin-2.urchin-active {
+  animation-delay: 0.3s;
+}
+
+.urchin-3.urchin-active {
+  animation-delay: 0.6s;
+}
+
+.dizzy-stars {
+  opacity: 0;
+  transform-origin: 46px 1px;
+}
+
+.fish-school-3.dizzy .dizzy-stars {
+  opacity: 1;
+  animation: dizzy-spin 0.9s linear infinite;
+}
+
+@keyframes swim-lone {
+  0% {
+    translate: 0 0;
+  }
+
+  50% {
+    translate: -60vw 8vh;
+  }
+
+  100% {
+    translate: -128vw -3vh;
+  }
+}
+
+@keyframes swim-prey {
+  0% {
+    translate: 0 0;
+    rotate: 0deg;
+  }
+
+  45% {
+    translate: 65vw 2vh;
+    rotate: 0deg;
+  }
+
+  50% {
+    translate: 70vw -8vh;
+    rotate: -16deg;
+  }
+
+  58% {
+    translate: 80vw 3vh;
+    rotate: 4deg;
+  }
+
+  100% {
+    translate: 140vw 5vh;
+    rotate: 0deg;
+  }
+}
+
+@keyframes swim-predator {
+  0% {
+    translate: 0 0;
+  }
+
+  45% {
+    translate: 58vw 4vh;
+  }
+
+  55% {
+    translate: 68vw 5vh;
+  }
+
+  100% {
+    translate: 130vw 6vh;
+  }
+}
+
+@keyframes swim-lone-2 {
+  0% {
+    translate: 0 0;
+  }
+
+  50% {
+    translate: 62vw -6vh;
+  }
+
+  100% {
+    translate: 126vw 4vh;
+  }
+}
+
+@keyframes drift-comb-jelly {
+  0% {
+    translate: 0 0;
+    rotate: 0deg;
+  }
+
+  10% {
+    rotate: 6deg;
+  }
+
+  20% {
+    rotate: -5deg;
+  }
+
+  30% {
+    rotate: 6deg;
+  }
+
+  40% {
+    rotate: -4deg;
+  }
+
+  50% {
+    translate: 60vw 4vh;
+    rotate: 5deg;
+  }
+
+  60% {
+    rotate: -6deg;
+  }
+
+  70% {
+    rotate: 5deg;
+  }
+
+  80% {
+    rotate: -4deg;
+  }
+
+  90% {
+    rotate: 6deg;
+  }
+
+  100% {
+    translate: 128vw -6vh;
+    rotate: 0deg;
+  }
+}
+
+@keyframes comb-shimmer {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+
+  50% {
+    opacity: 1;
+  }
+}
+
+@keyframes drift-starfish {
+  0% {
+    translate: 0 0;
+    rotate: 0deg;
+  }
+
+  100% {
+    translate: 30vw -72vh;
+    rotate: 220deg;
+  }
+}
+
+@keyframes drift-starfish-2 {
+  0% {
+    translate: 0 0;
+    rotate: 0deg;
+  }
+
+  100% {
+    translate: -26vw -66vh;
+    rotate: -200deg;
+  }
+}
+
+@keyframes scuttle-crab {
+  0% {
+    translate: -9vw 0;
+    scale: 1 1;
+  }
+
+  49% {
+    scale: 1 1;
+  }
+
+  51% {
+    scale: -1 1;
+  }
+
+  100% {
+    translate: 9vw 0;
+    scale: -1 1;
+  }
+}
+
+@keyframes school-dash {
+  0%,
+  90% {
+    translate: 0 0;
+  }
+
+  94%,
+  100% {
+    translate: 140vw 2vh;
+  }
+}
+
+@keyframes shark-chase {
+  0%,
+  91% {
+    translate: 0 0;
+  }
+
+  97%,
+  100% {
+    translate: 128vw 3vh;
+  }
+}
+
+@keyframes school-dash-trigger {
+  0% {
+    translate: 0 0;
+  }
+
+  100% {
+    translate: 140vw 2vh;
+  }
+}
+
+@keyframes urchin-fall {
+  0% {
+    opacity: 0;
+    translate: 0 0;
+    rotate: 0deg;
+  }
+
+  8% {
+    opacity: 0.5;
+  }
+
+  92% {
+    opacity: 0.5;
+  }
+
+  100% {
+    opacity: 0;
+    translate: 0 118vh;
+    rotate: 340deg;
+  }
+}
+
+@keyframes dizzy-spin {
+  from {
+    rotate: 0deg;
+  }
+
+  to {
+    rotate: 360deg;
+  }
+}
+
+@keyframes shark-chase-trigger {
+  0% {
+    translate: 0 0;
+  }
+
+  100% {
+    translate: 128vw 3vh;
+  }
+}
+
+/* --- the jellyfish scene --- */
+
+#jelly-scene {
+  --hue: 0deg;
+  --sat: 1;
+  --scale: 1;
+
+  /* Prefer a larger share of the viewport so early stages don't look stranded,
+     especially on phone; stage --scale still differentiates life phases. */
+  width: min(86vw, 34rem, 72dvh);
+  height: min(86vw, 34rem, 72dvh);
+  flex-shrink: 0;
+  display: block;
+  margin: 0;
+  overflow: visible;
+  background: transparent;
+
+  /* Hue/sat only on the whole scene — the bloom filter used to light a
+     rectangular plate behind the animal. Soft glow stays on SVG parts. */
+  filter: hue-rotate(var(--hue)) saturate(var(--sat));
+  transform: scale(var(--scale));
+  transform-origin: center center;
+  transition:
+    filter 160ms linear,
+    transform 160ms linear;
+}
+
+#jelly-scene .stage {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  filter: url("#glow");
+  transition: none;
+}
+
+#jelly-scene.is-resetting {
+  animation: reset-flash 420ms ease-out;
+}
+
+#ouroboros-ring {
+  filter: url("#ouroborosGlow") brightness(1) drop-shadow(0 0 0 transparent);
+}
+
+#jelly-scene.is-resetting #ouroboros-ring {
+  animation: ouroboros-draw 2800ms ease-out;
+  transform-origin: 200px 200px;
+}
+
+@keyframes reset-flash {
+  0% {
+    opacity: 1;
+  }
+
+  30% {
+    opacity: 0.15;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+/* draws the infinity symbol on, then swells with a bright overflow flare at
+   its peak before settling back to its original size and fading -- slow and
+   deliberate, reading as life force welling up rather than a quick flash. */
+@keyframes ouroboros-draw {
+  0% {
+    opacity: 0;
+    stroke-dashoffset: 850;
+    scale: 1;
+    stroke-width: 5;
+    filter: url("#ouroborosGlow") brightness(1) drop-shadow(0 0 0 transparent);
+  }
+
+  10% {
+    opacity: 1;
+  }
+
+  58% {
+    opacity: 1;
+    stroke-dashoffset: 0;
+    scale: 1;
+    stroke-width: 5;
+    filter: url("#ouroborosGlow") brightness(1) drop-shadow(0 0 0 transparent);
+  }
+
+  76% {
+    scale: 1.32;
+    stroke-width: 7.5;
+    filter: url("#ouroborosGlow") brightness(1.9) drop-shadow(0 0 26px #8dffb8);
+  }
+
+  92% {
+    opacity: 1;
+    scale: 1;
+    stroke-width: 5;
+    filter: url("#ouroborosGlow") brightness(1) drop-shadow(0 0 0 transparent);
+  }
+
+  100% {
+    opacity: 0;
+    scale: 1;
+    stroke-width: 5;
+    filter: url("#ouroborosGlow") brightness(1) drop-shadow(0 0 0 transparent);
+  }
+}
+
+.current-stage-label {
+  min-height: 1.4em;
+  margin: 0.15rem 0 0;
+  font-family: var(--font-display);
+  color: #9fd4cd;
+  font-size: 1.2rem;
+  font-weight: 500;
+  font-optical-sizing: auto;
+  letter-spacing: 0.02em;
+}
+
+.stage-caption {
+  max-width: 26rem;
+  min-height: 2.6em;
+  margin: 0.15rem 0 0;
+  color: #8eb9b3;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1.45;
+}
+
+.controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 0.55rem;
+}
+
+.rebirth-button {
+  margin-top: 1rem;
+  padding: 0.65rem 1.35rem;
+  border: 1px solid rgb(127 231 214 / 45%);
+  border-radius: 999px;
+  background: rgb(13 43 58 / 55%);
+  color: #cdeeea;
+  font-family: var(--font-body);
+  font-size: 0.95rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition:
+    border-color 140ms ease,
+    background 140ms ease,
+    transform 140ms ease;
+}
+
+.rebirth-button:hover {
+  border-color: #7fe7d6;
+  background: rgb(13 43 58 / 80%);
+  transform: translateY(-1px);
+}
+
+.rebirth-button:focus-visible {
+  outline: 2px solid #7fe7d6;
+  outline-offset: 3px;
+}
+
+.rebirth-button.is-visible {
+  animation: rebirth-button-in 480ms ease-out;
+}
+
+@keyframes rebirth-button-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.4rem);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.primary-button {
+  position: relative;
+  padding: 0.9rem 2.2rem;
+  border: none;
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: #032027;
+  background: linear-gradient(90deg, #59e8d0, #eafcff);
+  box-shadow: 0 0 10px 1px rgb(89 232 208 / 35%);
+  cursor: pointer;
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+
+.primary-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 0 16px 2px rgb(89 232 208 / 50%);
+}
+
+.primary-button:disabled {
+  opacity: 0.6;
+  cursor: default;
+  transform: none;
+}
+
+.primary-button:focus-visible,
+.sr-only a:focus-visible {
+  outline: 2px solid #7fe7d6;
+  outline-offset: 3px;
+}
+
+/* button easter egg: for as long as the jellyfish is IN the senescent stage
+   (not just a brief flourish at the transition), the button itself turns
+   green, breathes with a slow glow, and keeps puffing small sparks outward --
+   so the button the visitor is touching carries the "life force" cue the
+   whole time that stage lasts, not just for a moment. */
+.primary-button.is-senescent {
+  background: linear-gradient(90deg, #38d97a, #d9ffe6);
+  animation: senescent-glow 2.6s ease-in-out infinite;
+}
+
+.button-burst {
+  position: absolute;
+  inset: 0;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.spark {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  margin: -3px 0 0 -3px;
+  border-radius: 50%;
+  background: #8dffb8;
+  box-shadow: 0 0 6px 2px rgb(141 255 184 / 80%);
+  opacity: 0;
+}
+
+.spark:nth-child(1) { --angle: 0deg; }
+.spark:nth-child(2) { --angle: 45deg; }
+.spark:nth-child(3) { --angle: 90deg; }
+.spark:nth-child(4) { --angle: 135deg; }
+.spark:nth-child(5) { --angle: 180deg; }
+.spark:nth-child(6) { --angle: 225deg; }
+.spark:nth-child(7) { --angle: 270deg; }
+.spark:nth-child(8) { --angle: 315deg; }
+
+.primary-button.is-senescent .spark {
+  animation: spark-trickle 2.4s ease-out infinite;
+}
+
+.primary-button.is-senescent .spark:nth-child(2) { animation-delay: 0.3s; }
+.primary-button.is-senescent .spark:nth-child(3) { animation-delay: 0.6s; }
+.primary-button.is-senescent .spark:nth-child(4) { animation-delay: 0.9s; }
+.primary-button.is-senescent .spark:nth-child(5) { animation-delay: 1.2s; }
+.primary-button.is-senescent .spark:nth-child(6) { animation-delay: 1.5s; }
+.primary-button.is-senescent .spark:nth-child(7) { animation-delay: 1.8s; }
+.primary-button.is-senescent .spark:nth-child(8) { animation-delay: 2.1s; }
+
+@keyframes senescent-glow {
+  0%,
+  100% {
+    box-shadow: 0 0 20px 5px rgb(87 227 137 / 60%);
+  }
+
+  50% {
+    box-shadow: 0 0 34px 10px rgb(87 227 137 / 85%);
+  }
+}
+
+@keyframes spark-trickle {
+  0% {
+    transform: rotate(var(--angle)) translateY(0);
+    opacity: 0;
+  }
+
+  15% {
+    opacity: 1;
+  }
+
+  100% {
+    transform: rotate(var(--angle)) translateY(-38px) scale(0.3);
+    opacity: 0;
+  }
+}
+
+@keyframes spark-burst {
+  0% {
+    transform: rotate(var(--angle)) translateY(0);
+    opacity: 1;
+  }
+
+  100% {
+    transform: rotate(var(--angle)) translateY(-42px) scale(0.3);
+    opacity: 0;
+  }
+}
+
+.info-button {
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 1px solid rgb(127 231 214 / 40%);
+  border-radius: 50%;
+  background: rgb(13 43 58 / 70%);
+  color: #7fe7d6;
+  font-size: 1.2rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.info-button:hover {
+  border-color: #7fe7d6;
+}
+
+.info-button:focus-visible {
+  outline: 2px solid #7fe7d6;
+  outline-offset: 3px;
+  border-color: #7fe7d6;
+}
+
+.sound-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sound-button .mute-x {
+  opacity: 0;
+}
+
+.sound-button[aria-pressed="true"] .sound-waves {
+  opacity: 0;
+}
+
+.sound-button[aria-pressed="true"] .mute-x {
+  opacity: 1;
+}
+
+dialog.bottle-dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 100;
+  overflow: hidden;
+  width: min(92vw, 30rem);
+  min-height: min(85vh, 30rem);
+  max-height: min(92vh, 40rem);
+  padding: 0;
+  translate: -50% -50%;
+  border: 1px solid rgb(255 255 255 / 45%);
+  border-radius: 1rem;
+  color: #1e3a3a;
+  box-shadow: 0 0 40px 10px rgb(0 0 0 / 45%);
+}
+
+/* Flex layout (for vertically centering the content card) only applies once
+   the dialog actually has the [open] attribute -- setting `display` on the
+   bare selector would override the UA's `dialog:not([open]) { display: none }`
+   default and leave the dialog visibly stuck open. */
+dialog.bottle-dialog[open] {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+dialog.bottle-dialog::backdrop {
+  background: rgb(1 3 6 / 70%);
+}
+
+/* The sunlit beach scene is a full-bleed SVG background, deliberately
+   daylight-warm against the deep-sea palette used everywhere else -- this
+   moment is a breath of open air before the loop continues. */
+.bottle-scene {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+}
+
+.bottle-wave {
+  animation: bottle-wave-shift 5s ease-in-out infinite;
+}
+
+.bottle-wave-2 {
+  animation-duration: 6.5s;
+  animation-direction: reverse;
+}
+
+.bottle-content {
+  position: relative;
+  z-index: 1;
+  flex-shrink: 1;
+  overflow: auto;
+  max-height: min(70vh, 28rem);
+  margin: 0 1.5rem;
+  padding: 0.9rem 1.1rem;
+  border-radius: 0.75rem;
+  background: rgb(255 252 240 / 88%);
+  box-shadow: 0 4px 18px rgb(20 60 50 / 18%);
+  transition: opacity 0.35s ease;
+}
+
+.bottle-content h2 {
+  margin: 0 0 0.65rem;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1e3a3a;
+}
+
+.bottle-narration {
+  margin: 0 0 0.85rem;
+  color: #35524f;
+  font-size: 0.88rem;
+  line-height: 1.55;
+  text-align: left;
+}
+
+.bottle-quote {
+  margin: 0 0 0.7rem;
+  padding-left: 0.9rem;
+  border-left: 2px solid rgb(31 143 168 / 45%);
+  color: #35524f;
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1.55;
+  text-align: left;
+}
+
+.bottle-quote cite {
+  display: block;
+  margin-top: 0.3rem;
+  color: #5c7b74;
+  font-size: 0.75rem;
+  font-style: normal;
+}
+
+.bottle-quote cite i {
+  font-style: italic;
+}
+
+.bottle-hint {
+  margin: 0.9rem 0 0.75rem;
+  color: #5c7b74;
+  font-size: 0.8rem;
+  line-height: 1.5;
+  text-align: left;
+}
+
+.bottle-content textarea {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+  border: 1px solid rgb(31 143 168 / 35%);
+  border-radius: 0.5rem;
+  background: rgb(255 255 255 / 80%);
+  color: #1e3a3a;
+  font: inherit;
+  resize: vertical;
+}
+
+.bottle-content textarea:focus-visible {
+  outline: 2px solid #1f8fa8;
+  outline-offset: 2px;
+}
+
+.bottle-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.bottle-throw-button {
+  padding: 0.55rem 1.4rem;
+  font-size: 0.95rem;
+}
+
+.bottle-throw-button:focus-visible {
+  outline: 2px solid #7fe7d6;
+  outline-offset: 3px;
+}
+
+.bottle-dialog.is-throwing .bottle-content {
+  opacity: 0;
+}
+
+.bottle-icon {
+  position: absolute;
+  left: 52%;
+  bottom: 2.4rem;
+  z-index: 1;
+  translate: -50% 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Not thrown -- set adrift: it bobs on the waves and shrinks toward the
+   island on the horizon rather than being flung off-screen. */
+.bottle-dialog.is-throwing .bottle-icon {
+  animation: bottle-drift 1.4s ease-in forwards;
+}
+
+/* The splash sits at the bottle's fixed launch point rather than travelling
+   with it -- an impact marker, not part of the drift. */
+.bottle-splash {
+  position: absolute;
+  bottom: 2.2rem;
+  left: 52%;
+  z-index: 1;
+  width: 2.5rem;
+  height: 1rem;
+  translate: -50% 50%;
+  pointer-events: none;
+}
+
+.splash-ring {
+  position: absolute;
+  inset: 0;
+  border: 2px solid rgb(255 255 255 / 70%);
+  border-radius: 50%;
+  opacity: 0;
+}
+
+.bottle-dialog.is-throwing .splash-ring {
+  animation: splash-ring-expand 0.7s ease-out forwards;
+}
+
+.splash-ring-2 {
+  animation-delay: 0.12s;
+}
+
+.splash-drop {
+  position: absolute;
+  bottom: 50%;
+  left: 50%;
+  width: 0.22rem;
+  height: 0.22rem;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 85%);
+  opacity: 0;
+}
+
+.bottle-dialog.is-throwing .splash-drop {
+  animation: splash-drop-arc 0.6s ease-out forwards;
+}
+
+.splash-drop-2 {
+  left: 40%;
+  animation-delay: 0.03s;
+}
+
+.splash-drop-3 {
+  left: 63%;
+  animation-delay: 0.06s;
+}
+
+@keyframes splash-ring-expand {
+  0% {
+    scale: 0.3;
+    opacity: 0.8;
+  }
+
+  100% {
+    scale: 2.6;
+    opacity: 0;
+  }
+}
+
+@keyframes splash-drop-arc {
+  0% {
+    translate: -50% 0;
+    scale: 0.6;
+    opacity: 0.9;
+  }
+
+  40% {
+    translate: -50% -0.85rem;
+    scale: 1;
+    opacity: 1;
+  }
+
+  100% {
+    translate: -50% 0.35rem;
+    scale: 0.4;
+    opacity: 0;
+  }
+}
+
+@keyframes bottle-wave-shift {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+
+  50% {
+    transform: translateX(-14px);
+  }
+}
+
+@keyframes bottle-drift {
+  0% {
+    left: 52%;
+    bottom: 2.4rem;
+    rotate: -6deg;
+    scale: 1;
+    opacity: 1;
+  }
+
+  15% {
+    rotate: 6deg;
+  }
+
+  30% {
+    rotate: -5deg;
+  }
+
+  45% {
+    rotate: 5deg;
+  }
+
+  60% {
+    rotate: -4deg;
+  }
+
+  100% {
+    left: 20%;
+    bottom: 5.8rem;
+    rotate: 0deg;
+    scale: 0.3;
+    opacity: 0;
+  }
+}
+
+dialog#stage-info {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 100;
+  overflow: auto;
+  width: min(90vw, 30rem);
+  max-height: min(88vh, 42rem);
+  padding: 1.75rem;
+  translate: -50% -50%;
+  border: 1px solid rgb(127 231 214 / 30%);
+  border-radius: 1rem;
+  color: #dff6f4;
+  background: linear-gradient(180deg, #0d2b3a, #061a26);
+  box-shadow: 0 0 40px 10px rgb(0 0 0 / 50%);
+}
+
+dialog#stage-info::backdrop {
+  background: rgb(1 3 6 / 70%);
+}
+
+dialog.rebirth-dialog h2 {
+  margin: 0 1.5rem 0.85rem 0;
+  font-family: var(--font-display);
+  font-size: 1.4rem;
+  font-weight: 600;
+}
+
+dialog#stage-info h2 {
+  margin: 0 0 1rem;
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  font-weight: 600;
+}
+
+dialog#stage-info p {
+  margin: 0;
+  color: #b9dedb;
+  line-height: 1.6;
+  text-align: left;
+}
+
+dialog.rebirth-dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 100;
+  overflow: auto;
+  width: min(92vw, 34rem);
+  max-height: min(88vh, 40rem);
+  padding: 1.75rem;
+  translate: -50% -50%;
+  border: 1px solid rgb(127 231 214 / 30%);
+  border-radius: 1rem;
+  color: #dff6f4;
+  background: linear-gradient(180deg, #0d2b3a, #061a26);
+  box-shadow: 0 0 40px 10px rgb(0 0 0 / 50%);
+}
+
+dialog.rebirth-dialog::backdrop {
+  background: rgb(1 3 6 / 70%);
+}
+
+.rebirth-lead {
+  margin: 0 0 1rem;
+  color: #9fd4cd;
+  font-family: var(--font-display);
+  font-size: 1.02rem;
+  font-style: italic;
+  line-height: 1.55;
+  text-align: left;
+}
+
+.rebirth-steps {
+  margin: 0 0 1rem;
+  padding-left: 1.2rem;
+  color: #b9dedb;
+  line-height: 1.55;
+  text-align: left;
+}
+
+.rebirth-steps li {
+  margin-bottom: 0.85rem;
+}
+
+.rebirth-steps li:last-child {
+  margin-bottom: 0;
+}
+
+.rebirth-steps strong {
+  color: #dff6f4;
+  font-weight: 600;
+}
+
+.rebirth-note {
+  margin: 0;
+  padding-top: 0.85rem;
+  border-top: 1px solid rgb(127 231 214 / 22%);
+  color: #9fd4cd;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  text-align: left;
+}
+
+.dialog-close {
+  position: absolute;
+  top: 0.55rem;
+  right: 0.55rem;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 1px solid rgb(127 231 214 / 35%);
+  border-radius: 50%;
+  background: rgb(6 26 38 / 75%);
+  color: #cdeeea;
+  font-size: 1.45rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.dialog-close:hover {
+  color: #fff;
+  border-color: #7fe7d6;
+  background: rgb(13 43 58 / 90%);
+}
+
+.dialog-close:focus-visible {
+  outline: 2px solid #7fe7d6;
+  outline-offset: 2px;
+}
+
+.bottle-dialog .dialog-close {
+  color: #1e3a3a;
+  border-color: rgb(30 58 58 / 30%);
+  background: rgb(255 252 240 / 85%);
+}
+
+.bottle-dialog .dialog-close:hover {
+  color: #06222a;
+  border-color: rgb(30 58 58 / 55%);
+  background: rgb(255 255 255 / 95%);
+}
+
+.reference-photo {
+  margin: 0 0 1rem;
+  overflow: hidden;
+  border: 1px solid rgb(127 231 214 / 28%);
+  border-radius: 0.65rem;
+  background: #041820;
+  text-align: left;
+}
+
+.reference-photo img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: cover;
+  background: #062028;
+}
+
+.reference-photo figcaption {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding: 0.65rem 0.8rem 0.8rem;
+}
+
+.image-credit {
+  color: #8eb9b3;
+  font-size: 0.72rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.specimen-line {
+  color: #9fd4cd;
+  font-size: 0.82rem;
+  line-height: 1.4;
+}
+
+.specimen-name {
+  color: #7fe7d6;
+  font-style: italic;
+}
+
+.specimen-note {
+  color: #7aa8a2;
+  font-size: 0.75rem;
+  line-height: 1.45;
+}
+
+.stage-info-caption {
+  margin: 0 0 0.75rem;
+  color: #9fd4cd;
+  font-family: var(--font-display);
+  font-size: 1rem;
+  font-style: italic;
+  font-weight: 500;
+  line-height: 1.5;
+  text-align: left;
+}
+
+/* --- idle motion: each stage keeps breathing/swaying at rest, not just
+   mid-transition -- amplitude and pace vary per stage so none of the four
+   feel interchangeable even standing still --- */
+
+@keyframes bell-pulse {
+  0%,
+  100% {
+    transform: scale(1, 1);
+  }
+
+  50% {
+    transform: scale(1.03, 0.95);
+  }
+}
+
+@keyframes limb-sway {
+  0%,
+  100% {
+    transform: rotate(-2deg);
+  }
+
+  50% {
+    transform: rotate(2deg);
+  }
+}
+
+#jelly-scene .body {
+  transform-box: fill-box;
+  transform-origin: 50% 0%;
+  animation: bell-pulse 3.6s ease-in-out infinite;
+}
+
+#jelly-scene .tentacles,
+#jelly-scene .oral-arms {
+  transform-box: fill-box;
+  transform-origin: 50% 0%;
+  animation: limb-sway 4.4s ease-in-out infinite;
+}
+
+#jelly-scene .stage[data-stage="polyp"] .tentacles {
+  animation-duration: 5.2s;
+}
+
+#jelly-scene .stage[data-stage="young"] .body {
+  animation-duration: 2.4s;
+}
+
+#jelly-scene .stage[data-stage="young"] .tentacles {
+  animation-duration: 3.2s;
+}
+
+#jelly-scene .stage[data-stage="mature"] .oral-arms {
+  animation-duration: 3s;
+  animation-direction: alternate;
+}
+
+#jelly-scene .stage[data-stage="mature"] .tentacles {
+  animation-duration: 5s;
+}
+
+#jelly-scene .stage[data-stage="senescent"] .body,
+#jelly-scene .stage[data-stage="senescent"] .tentacles {
+  animation-duration: 6.5s;
+  animation-timing-function: ease-in;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  #intro-splash {
+    animation: none;
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  .particle {
+    display: none;
+  }
+
+  .critter {
+    display: none;
+  }
+
+  .urchin,
+  .dizzy-stars {
+    display: none;
+  }
+
+  .bottle-icon,
+  .bottle-splash {
+    display: none;
+  }
+
+  .bottle-wave,
+  .bottle-wave-2 {
+    animation: none;
+  }
+
+  #jelly-scene .stage,
+  #jelly-scene {
+    transition: none;
+  }
+
+  #jelly-scene.is-resetting,
+  #jelly-scene.is-resetting #ouroboros-ring {
+    animation: none;
+  }
+
+  .primary-button.is-senescent,
+  .primary-button.is-senescent .spark,
+  .rebirth-button.is-visible {
+    animation: none;
+  }
+
+  #jelly-scene .body,
+  #jelly-scene .tentacles,
+  #jelly-scene .oral-arms {
+    animation: none;
+  }
 }

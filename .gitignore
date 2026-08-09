@@ -2,6 +2,10 @@ node_modules/
 dist/
 *.log
 
+# large source frames for regenerating stage GIFs (script: scripts/make-stage-gifs.py)
+assets/stages/frames/
+scripts/__pycache__/
+
 # editor and OS junk
 .DS_Store
 ._*
