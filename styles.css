@@ -1420,6 +1420,7 @@ dialog.rebirth-dialog::backdrop {
 }
 
 .reference-photo {
+  position: relative;
   margin: 0 0 1rem;
   overflow: hidden;
   border: 1px solid rgb(127 231 214 / 28%);
@@ -1435,6 +1436,50 @@ dialog.rebirth-dialog::backdrop {
   aspect-ratio: 1;
   object-fit: cover;
   background: #062028;
+}
+
+/* Placeholder shown while a stage's photo is in flight. The caption, species
+   name and alt text swap the instant the stage changes, so leaving the
+   previous stage's image up would pair the wrong animal with the right words
+   -- an empty panel is the honest state. Sized to the image's own square box
+   so nothing reflows when the photo arrives. */
+.reference-photo::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  left: 0;
+  aspect-ratio: 1;
+  background: linear-gradient(100deg, #062028 30%, #0b3040 50%, #062028 70%);
+  background-size: 300% 100%;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 140ms ease;
+}
+
+.reference-photo.is-loading::before {
+  opacity: 1;
+  animation: photo-shimmer 1.2s ease-in-out infinite;
+}
+
+.reference-photo.is-loading img {
+  visibility: hidden;
+}
+
+@keyframes photo-shimmer {
+  from {
+    background-position: 100% 0;
+  }
+
+  to {
+    background-position: 0 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reference-photo.is-loading::before {
+    animation: none;
+  }
 }
 
 .reference-photo figcaption {

@@ -27,6 +27,7 @@ const infoTitle = document.querySelector<HTMLHeadingElement>("#stage-info-title"
 const infoCaption = document.querySelector<HTMLParagraphElement>("#stage-info-caption");
 const infoDetail = document.querySelector<HTMLParagraphElement>("#stage-info-detail");
 const infoPhoto = document.querySelector<HTMLImageElement>("#stage-info-photo");
+const infoFigure = document.querySelector<HTMLElement>(".reference-photo");
 const infoSpecimen = document.querySelector<HTMLElement>("#stage-info-specimen");
 const infoSpecimenNote = document.querySelector<HTMLElement>("#stage-info-specimen-note");
 const infoClose = document.querySelector<HTMLButtonElement>("#stage-info-close");
@@ -43,6 +44,13 @@ const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)
 let current: Stage = "polyp";
 let animating = false;
 let soundMuted = true;
+const AMBIENT_GAIN = 0.055;
+let ambient: {
+  source: AudioBufferSourceNode;
+  gain: GainNode;
+  lfo: OscillatorNode;
+  bubbles: number;
+} | null = null;
 let audioCtx: AudioContext | null = null;
 let hasShownBottleDialog = false;
 let hasUnlockedRebirth = false;
@@ -192,6 +200,65 @@ function playBubble(size = 1): void {
   noise.stop(now + dur + 0.02);
 }
 
+// Deep-sea room tone. A long noise loop pushed through a low lowpass so only
+// the swell survives, with a very slow LFO opening and closing the filter so
+// it breathes rather than hisses, plus sparse distant bubbles so the ambience
+// has events and not just texture. Synthesised, not a file: the site ships no
+// audio assets at all, so this costs nothing on the wire.
+function startAmbient(): void {
+  if (ambient) return;
+  const ctx = ensureAudioCtx();
+  const now = ctx.currentTime;
+
+  const source = ctx.createBufferSource();
+  source.buffer = makeNoiseBuffer(ctx, 4);
+  source.loop = true;
+
+  const rumbleCut = ctx.createBiquadFilter();
+  rumbleCut.type = "highpass";
+  rumbleCut.frequency.setValueAtTime(45, now);
+
+  const swell = ctx.createBiquadFilter();
+  swell.type = "lowpass";
+  swell.frequency.setValueAtTime(255, now);
+  swell.Q.setValueAtTime(0.7, now);
+
+  const gain = ctx.createGain();
+  gain.gain.setValueAtTime(0.0001, now);
+  gain.gain.exponentialRampToValueAtTime(AMBIENT_GAIN, now + 2.5);
+
+  // ~17s period: slow enough to feel like water moving, not tremolo.
+  const lfo = ctx.createOscillator();
+  const lfoDepth = ctx.createGain();
+  lfo.frequency.setValueAtTime(0.06, now);
+  lfoDepth.gain.setValueAtTime(90, now);
+  lfo.connect(lfoDepth).connect(swell.frequency);
+  lfo.start(now);
+
+  source.connect(rumbleCut).connect(swell).connect(gain).connect(ctx.destination);
+  source.start(now);
+
+  const bubbles = window.setInterval(() => {
+    if (Math.random() < 0.5) playBubble(0.6);
+  }, 5200);
+
+  ambient = { source, gain, lfo, bubbles };
+}
+
+function stopAmbient(): void {
+  if (!ambient) return;
+  const { source, gain, lfo, bubbles } = ambient;
+  ambient = null;
+  window.clearInterval(bubbles);
+  const ctx = ensureAudioCtx();
+  const now = ctx.currentTime;
+  gain.gain.cancelScheduledValues(now);
+  gain.gain.setValueAtTime(Math.max(gain.gain.value, 0.0001), now);
+  gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.8);
+  source.stop(now + 0.9);
+  lfo.stop(now + 0.9);
+}
+
 // A soft trail of uneven bubbles for the loop-reset — like air escaping upward.
 function playLoopSwell(): void {
   if (soundMuted) return;
@@ -333,15 +400,33 @@ nextButton?.addEventListener("click", () => {
   animateTransition(current, nextStage(current));
 });
 
+// A browser keeps showing the old image until the new one has decoded, which
+// here means the previous stage's animal sitting under this stage's caption,
+// species name and alt text. Hide it and show the placeholder instead until
+// the right photo is actually ready.
+function swapStagePhoto(image: string, imageAlt: string): void {
+  if (!infoPhoto) return;
+  infoPhoto.alt = imageAlt;
+  const current = infoPhoto.getAttribute("src");
+  if (current === image && infoPhoto.complete) return;
+  infoFigure?.classList.add("is-loading");
+  infoPhoto.src = image;
+  // Already in cache: clear the placeholder in the same frame so repeat
+  // opens don't flash an empty panel.
+  if (infoPhoto.complete) infoFigure?.classList.remove("is-loading");
+}
+
+// Both events, so a photo that 404s clears the placeholder too rather than
+// leaving the panel shimmering forever.
+infoPhoto?.addEventListener("load", () => infoFigure?.classList.remove("is-loading"));
+infoPhoto?.addEventListener("error", () => infoFigure?.classList.remove("is-loading"));
+
 function fillStageInfo(stage: Stage): void {
   const info = STAGE_INFO[stage];
   if (infoTitle) infoTitle.textContent = info.label;
   if (infoCaption) infoCaption.textContent = info.caption;
   if (infoDetail) infoDetail.textContent = info.detail;
-  if (infoPhoto) {
-    infoPhoto.src = info.image;
-    infoPhoto.alt = info.imageAlt;
-  }
+  swapStagePhoto(info.image, info.imageAlt);
   if (infoSpecimen) infoSpecimen.textContent = info.specimen;
   if (infoSpecimenNote) infoSpecimenNote.textContent = info.specimenNote;
 }
@@ -390,8 +475,24 @@ bottleThrow?.addEventListener("click", () => {
 soundToggle?.addEventListener("click", () => {
   soundMuted = !soundMuted;
   soundToggle.setAttribute("aria-pressed", String(soundMuted));
-  soundToggle.setAttribute("aria-label", soundMuted ? "Unmute sound effects" : "Mute sound effects");
-  if (!soundMuted) playBubble();
+  soundToggle.setAttribute("aria-label", soundMuted ? "Unmute sound" : "Mute sound");
+  if (soundMuted) {
+    stopAmbient();
+    return;
+  }
+  startAmbient();
+  playBubble();
+});
+
+// Don't keep a drone running in a tab nobody is looking at. Suspending the
+// whole context also parks the ambience cheaply, and it comes back on return
+// unless the visitor muted in the meantime.
+document.addEventListener("visibilitychange", () => {
+  if (document.hidden) {
+    if (audioCtx?.state === "running") void audioCtx.suspend();
+  } else if (!soundMuted && audioCtx?.state === "suspended") {
+    void audioCtx.resume();
+  }
 });
 
 spawnParticles();

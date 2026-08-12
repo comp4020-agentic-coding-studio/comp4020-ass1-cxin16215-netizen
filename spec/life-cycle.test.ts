@@ -30,6 +30,15 @@ describe("life-cycle page: static contract", () => {
     expect(photo!.getAttribute("src")).toMatch(/assets\/stages\/.+\.png$/);
   });
 
+  it("ships sound muted, behind a labelled toggle", () => {
+    // Audio never starts on its own: browsers block it without a gesture, and
+    // a page that makes noise unasked is hostile. The toggle is the only way
+    // in, so it has to carry a real name and a pressed state.
+    const toggle = doc.querySelector("#sound-toggle")!;
+    expect(toggle.getAttribute("aria-pressed")).toBe("true");
+    expect(toggle.getAttribute("aria-label")?.trim().length).toBeGreaterThan(0);
+  });
+
   it("defers the stage photo so it isn't on the critical path", () => {
     // The photo lives in a closed <dialog>, but browsers fetch display:none
     // images eagerly — so without this it is ~345 kB of the first paint for
