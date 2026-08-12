@@ -11,9 +11,7 @@ treating them as one.
 The first was a principle I held on purpose. This is an explainer, so the
 atmosphere must never compete with the thing being explained. That is why
 the loop back to polyp is never described in text — it has to be discovered,
-not read — and why every ambient layer is non-interactive. When two easter
-eggs could fire at the same time, I decoupled them rather than let the page
-get crowded.
+not read — and why every ambient layer is non-interactive.
 
 The second was a real ceiling. Hand-authored SVG driven by script cannot
 match what proper motion-design tooling produces, and there is almost no
