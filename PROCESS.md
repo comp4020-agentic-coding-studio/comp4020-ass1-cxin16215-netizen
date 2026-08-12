@@ -40,8 +40,8 @@ built around.
 built page and every test passed first run. Instead of banking that, I tried
 to make it fail. I couldn't: with the dialogs merely opened, stripping an
 `<img alt>` and unnaming a close button both still reported zero violations.
-JSDOM can't model a modal top layer, so axe was abandoning ~30 rules as
-"incomplete", which reports identically to passing. Hoisting the dialog
+JSDOM can't model a modal top layer, so axe was abandoning most of its rules
+as "incomplete", which reports identically to passing. Hoisting the dialog
 content out of its shell restored a real audit and caught both. I added a
 permanent guard on how many rules actually get evaluated, so the suite goes
 red if the audit ever silently stops.
