@@ -30,6 +30,17 @@ describe("life-cycle page: static contract", () => {
     expect(photo!.getAttribute("src")).toMatch(/assets\/stages\/.+\.png$/);
   });
 
+  it("defers the stage photo so it isn't on the critical path", () => {
+    // The photo lives in a closed <dialog>, but browsers fetch display:none
+    // images eagerly — so without this it is ~345 kB of the first paint for
+    // a dialog most visitors never open. width/height stay set so the
+    // reserved box doesn't reflow when it does arrive.
+    const photo = doc.querySelector<HTMLImageElement>("#stage-info-photo")!;
+    expect(photo.getAttribute("loading")).toBe("lazy");
+    expect(photo.getAttribute("width")).toBeTruthy();
+    expect(photo.getAttribute("height")).toBeTruthy();
+  });
+
   it("credits the stage image as AI-generated and names a reference species", () => {
     const credit = doc.querySelector(".image-credit");
     expect(credit?.textContent?.toLowerCase()).toMatch(/ai-generated/);
